@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
+import java.security.NoSuchAlgorithmException;
+
 @Controller
 public class LoginController {
 
@@ -23,19 +25,15 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public String login(HttpSession session, @RequestParam String username, @RequestParam String password) {
+    public String login(Model m, HttpSession session, @RequestParam String username, @RequestParam String password) throws NoSuchAlgorithmException {
         User user = loginService.checkUser(username,password);
         if (user != null) {
             session.setAttribute("user", username);
-            return "redirect:/privatePage";
+            return "redirect:/start";
+        }else {
+            m.addAttribute("errorMessage", "Usuario i/o contraseña incorrectos");
+            return "login";
         }
-        return "login";
-    }
-
-    @GetMapping("/privatePage")
-    public String privatePage(Model m, @SessionAttribute String user) {
-        m.addAttribute("user", user);
-        return "privatePage";
     }
 
 }

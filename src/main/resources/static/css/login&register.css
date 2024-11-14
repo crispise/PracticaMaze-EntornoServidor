@@ -1,0 +1,29 @@
+body {
+    overflow-x: hidden;
+    height: 100%;
+}
+.container {
+    max-width: 500px;
+}
+.form-control {
+    width: 100%;
+}
+.btn {
+    margin: 10px;
+    width: 150px;
+    background-color: #121f3c;
+    color: white;
+}
+
+.btn:hover {
+    background-color: #7082a7;
+    color: white;
+}
+h2, label{
+    font-weight:bold;
+}
+
+form{
+
+    background-color: rgba(255, 255, 255, 0.251);
+}

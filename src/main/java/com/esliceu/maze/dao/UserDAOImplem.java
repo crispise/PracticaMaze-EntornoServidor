@@ -2,6 +2,7 @@ package com.esliceu.maze.dao;
 
 import com.esliceu.maze.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -16,7 +17,12 @@ public class UserDAOImplem implements UserDAO {
     @Override
     public User findUserByUsername(String username) {
         String sql = "select * from user where username = ?";
-        return jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(User.class), username);
+        try {
+            return jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(User.class), username);
+        } catch (EmptyResultDataAccessException e) {
+            // If no user is found, return null
+            return null;
+        }
     }
 
     @Override
