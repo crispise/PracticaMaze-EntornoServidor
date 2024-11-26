@@ -6,6 +6,8 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public class RoomDAOImplem implements RoomDAO{
     @Autowired
@@ -25,5 +27,15 @@ public class RoomDAOImplem implements RoomDAO{
     @Override
     public void updateTotalKeys(int roomId, int roomTotalKeys) {
         jdbcTemplate.update("UPDATE room SET doorKeyId = ? WHERE id = ?", 0, roomId);
+    }
+
+    @Override
+    public List<Room> getRoomsWithCoins() {
+        return jdbcTemplate.query("select * from room where coins = 0", new BeanPropertyRowMapper<>(Room.class));
+    }
+
+    @Override
+    public void resetRoomCoins(Room room) {
+        jdbcTemplate.update("update room set coins = ? where roomId = ?", room.getInitialCoins(), room.getId());
     }
 }

@@ -8,6 +8,16 @@ public class Room {
     private Integer east;
     private Integer west;
     private Integer coins;
+
+    public Integer getInitialCoins() {
+        return initialCoins;
+    }
+
+    public void setInitialCoins(Integer initialCoins) {
+        this.initialCoins = initialCoins;
+    }
+
+    private Integer initialCoins;
     private Integer doorKeyId;
 
     public int getId() {
@@ -84,6 +94,7 @@ public class Room {
                 ", east=" + east +
                 ", west=" + west +
                 ", coins=" + coins +
+                ", initialCoins=" + initialCoins +
                 ", doorKeyId=" + doorKeyId +
                 '}';
     }

@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -43,6 +44,9 @@ public class StartService {
         List<Door> doors = doorDAO.findAllDoorsByRoomId(room.getId());
         updateUserStatus(username, room.getId());
         User user = userDAO.getUserByUsername(username);
+        if (checkIfUserHasKey(user, room)){
+            mapa.put("keys", room.getDoorKeyId());
+        }
         mapa.put("userRoom", user.getRoomId());
         mapa.put("userCoins", user.getCoins());
         mapa.put("userKeys", getKeysInfo(user));
@@ -51,12 +55,25 @@ public class StartService {
         mapa.put("east", room.getEast());
         mapa.put("west", room.getWest());
         mapa.put("coins", room.getCoins());
-        mapa.put("keys", room.getDoorKeyId());
         mapa.put("doors", getDoorsInfo(doors));
         mapa.put("errorMessage", errorMessage);
         Gson gson = new Gson();
         return gson.toJson(mapa);
     }
+
+    private boolean checkIfUserHasKey(User user, Room room) {
+        if (user.getIdKeys() == null || user.getIdKeys().isEmpty()) {
+            return true;
+        }
+        if (room.getDoorKeyId() != null){
+            List<String> userKeys = Arrays.asList(user.getIdKeys().split(","));
+            String roomKey = String.valueOf(room.getDoorKeyId());
+            if (!userKeys.contains(roomKey)) return true;
+        }
+        return false;
+    }
+
+
 
     private String getKeysInfo(User user) {
         String idKeys = user.getIdKeys();

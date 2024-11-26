@@ -11,4 +11,6 @@ public interface UserDAO {
     void updateTotalUserCoins(String username, int totalCoins);
 
     void updateTotalUserKeys(String username, String userKeys);
+
+    void resetUser(int startRoomId, int i, Object o, Object o1, String username);
 }

@@ -20,31 +20,32 @@ public class GetKeyService {
     @Autowired
     StartService startService;
 
-    public String addKeyToUser(String username) {
+    public String ckeckClickInKey(String username) {
         User user = userDAO.getUserByUsername(username);
         Room room = roomDAO.getRoomById(user.getRoomId());
         if (room.getDoorKeyId() != null){
             DoorKey doorKey = doorKeyDAO.getKeyById(room.getDoorKeyId());
             if (user.getCoins() >= doorKey.getNeededCoins()) {
-                String doorKeyId = String.valueOf(doorKey.getId());
-                String userKeys = user.getIdKeys();
-                if (userKeys == null || userKeys.isEmpty()) {
-                    userKeys = doorKeyId; //
-                } else {
-                    userKeys += "," + doorKeyId; //
-                }
-                userDAO.updateTotalUserKeys(username, userKeys);
-                int userCoins = user.getCoins() - doorKey.getNeededCoins();
-                userDAO.updateTotalUserCoins(username, userCoins);
-                roomDAO.updateTotalKeys(room.getId(), 0);
-                Room updatedRoom = roomDAO.getRoomById(room.getId());
-                return startService.createJson(username, updatedRoom, "");
+                return addKeyToUser(username, doorKey, user, room);
             }else {
                 int coins = doorKey.getNeededCoins() - user.getCoins();
                 return startService.createJson(username, room, "Te faltan " + coins + " monedas.");
             }
-
         }
         return startService.createJson(username, room, "En esta habitación no hay llaves." );
+    }
+
+    private String addKeyToUser(String username, DoorKey doorKey, User user, Room room) {
+        String doorKeyId = String.valueOf(doorKey.getId());
+        String userKeys = user.getIdKeys();
+        if (userKeys == null || userKeys.isEmpty()) {
+            userKeys = doorKeyId;
+        } else {
+            userKeys += "," + doorKeyId;
+        }
+        int actualUserCoins = user.getCoins() - doorKey.getNeededCoins();
+        userDAO.updateTotalUserKeys(username, userKeys);
+        userDAO.updateTotalUserCoins(username, actualUserCoins);
+        return startService.createJson(username, room, "");
     }
 }

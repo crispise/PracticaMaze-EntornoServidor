@@ -43,4 +43,12 @@ public class UserDAOImplem implements UserDAO {
     public void updateTotalUserKeys(String username, String userKeys) {
         jdbcTemplate.update("UPDATE users SET idKeys = ? WHERE username = ?", userKeys, username);
     }
+
+    @Override
+    public void resetUser(int startRoomId, int initialCoins, Object gameTime, Object idKeys, String username) {
+        jdbcTemplate.update(
+                "UPDATE users SET roomId = ?, coins = ?, gameTime = ?, idKeys = ? WHERE username = ?",
+                startRoomId, initialCoins, gameTime, idKeys, username
+        );
+    }
 }
