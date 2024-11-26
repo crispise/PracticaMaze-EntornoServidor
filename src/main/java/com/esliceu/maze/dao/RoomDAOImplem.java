@@ -20,22 +20,7 @@ public class RoomDAOImplem implements RoomDAO{
     }
 
     @Override
-    public void updateTotalCoins(int id, int roomTotalCoins) {
-        jdbcTemplate.update("UPDATE room SET coins = ? WHERE id = ?", roomTotalCoins, id);
-    }
-
-    @Override
-    public void updateTotalKeys(int roomId, int roomTotalKeys) {
-        jdbcTemplate.update("UPDATE room SET doorKeyId = ? WHERE id = ?", 0, roomId);
-    }
-
-    @Override
-    public List<Room> getRoomsWithCoins() {
-        return jdbcTemplate.query("select * from room where coins = 0", new BeanPropertyRowMapper<>(Room.class));
-    }
-
-    @Override
-    public void resetRoomCoins(Room room) {
-        jdbcTemplate.update("update room set coins = ? where roomId = ?", room.getInitialCoins(), room.getId());
+    public List<Room> getAllRoomsByMapId(int mapId) {
+        return jdbcTemplate.query("select * from room where mapId = ?",new BeanPropertyRowMapper<>(Room.class), mapId);
     }
 }

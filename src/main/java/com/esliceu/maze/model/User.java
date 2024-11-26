@@ -9,7 +9,7 @@ public class User {
     private String username;
     private String password;
     private Integer roomId;
-    private int coins;
+    private Integer coins;
     private Integer gameTime;
     private String idKeys;
 
@@ -54,11 +54,11 @@ public class User {
         this.roomId = roomId;
     }
 
-    public int getCoins() {
+    public Integer getCoins() {
         return coins;
     }
 
-    public void setCoins(int coins) {
+    public void setCoins(Integer coins) {
         this.coins = coins;
     }
 

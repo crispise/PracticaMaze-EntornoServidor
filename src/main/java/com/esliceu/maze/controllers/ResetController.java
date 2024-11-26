@@ -14,8 +14,8 @@ public class ResetController {
     @GetMapping("/reset")
     public String reset (Model m, HttpSession session) {
         String username = (String) session.getAttribute("user");
-        String jsonToSend = resetService.resetGame(username);
-        m.addAttribute("jsonInfo", jsonToSend);
-        return "game";
+        resetService.resetGame(username);
+        session.invalidate();
+        return "redirect:/login";
     }
 }

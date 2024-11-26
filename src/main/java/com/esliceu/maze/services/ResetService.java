@@ -3,6 +3,7 @@ package com.esliceu.maze.services;
 import com.esliceu.maze.dao.MapDAO;
 import com.esliceu.maze.dao.RoomDAO;
 import com.esliceu.maze.dao.UserDAO;
+import com.esliceu.maze.dao.UserRoomsDAO;
 import com.esliceu.maze.model.Map;
 import com.esliceu.maze.model.Room;
 import com.esliceu.maze.model.User;
@@ -21,16 +22,13 @@ public class ResetService {
     RoomDAO roomDAO;
     @Autowired
     StartService startService;
-    public String resetGame(String username) {
+    @Autowired
+    UserRoomsDAO userRoomsDAO;
+    public void resetGame(String username) {
         User user = userDAO.getUserByUsername(username);
         Room actualRoom = roomDAO.getRoomById(user.getRoomId());
         Map map = mapDAO.getMapById(actualRoom.getMapId());
-        userDAO.resetUser(map.getStartRoomId(), 0, null, null, username);
-        List<Room> roomsWithInitialCoins = roomDAO.getRoomsWithCoins();
-        for (Room room : roomsWithInitialCoins) {
-            roomDAO.resetRoomCoins(room);
-        }
-       Room initialRoom = roomDAO.getRoomById(map.getStartRoomId());
-       return startService.createJson(username, initialRoom, "");
+        userDAO.resetUser(null, 0, null, null, username);
+        userRoomsDAO.deleteUserRoomsByUserIdAndMapId(user.getId(), map.getId());
     }
 }

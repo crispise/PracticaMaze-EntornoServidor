@@ -1,8 +1,10 @@
 package com.esliceu.maze.model;
 
-public class Room {
+public class UserRooms {
     private int id;
+    private int userId;
     private int mapId;
+    private int roomId;
     private Integer north;
     private Integer south;
     private Integer east;
@@ -18,12 +20,28 @@ public class Room {
         this.id = id;
     }
 
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
     public int getMapId() {
         return mapId;
     }
 
     public void setMapId(int mapId) {
         this.mapId = mapId;
+    }
+
+    public int getRoomId() {
+        return roomId;
+    }
+
+    public void setRoomId(int roomId) {
+        this.roomId = roomId;
     }
 
     public Integer getNorth() {
@@ -76,9 +94,11 @@ public class Room {
 
     @Override
     public String toString() {
-        return "Room{" +
+        return "UserRooms{" +
                 "id=" + id +
+                ", userId=" + userId +
                 ", mapId=" + mapId +
+                ", roomId=" + roomId +
                 ", north=" + north +
                 ", south=" + south +
                 ", east=" + east +
