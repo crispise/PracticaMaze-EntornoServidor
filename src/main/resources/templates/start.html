@@ -1,21 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Start-Maze</title>
 </head>
 <body>
-<form method="post" class="border rounded p-4 shadow">
+<form method="post" action="/start" class="border rounded p-4 shadow">
     <h1>Bienvenido al juego</h1>
     <div class="form-group">
-        <label for="map">Selecciona el mapa</label>
-        <select id="map" class="form-select my-1 text-center">
-            <option id="map1" value="map1">Mapa 1</option>
-            <option id="map2" value="map2">Mapa 2</option>
+        <label for="mapOption">Selecciona el mapa</label>
+        <select id="mapOption" name="mapId" class="form-select my-1 text-center">
+            <option th:each="map : ${maps}" th:value="${map.id}" th:text="${map.mapName}"></option>
         </select>
-    </div>
-    <div class="d-flex justify-content-between mt-4">
-        <input type="submit" value="Enviar" class="btn btn-primary col-5">
+        <input type="submit" value="Envia">
     </div>
 </form>
 </body>

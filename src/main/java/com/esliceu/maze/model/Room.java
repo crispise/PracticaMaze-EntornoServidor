@@ -3,28 +3,12 @@ package com.esliceu.maze.model;
 public class Room {
     private int id;
     private int mapId;
-    private String name;
-    ///lo siguiente representa a una "lista" de puertas, si no hay tendrá -1 y si hay será el id de la puerta.
-    private int north;
-    private int south;
-    private int east;
-    private int west;
-
-    public int getMapId() {
-        return mapId;
-    }
-
-    public void setMapId(int mapId) {
-        this.mapId = mapId;
-    }
-
-    public int getNorth() {
-        return north;
-    }
-
-    public void setNorth(int north) {
-        this.north = north;
-    }
+    private Integer north;
+    private Integer south;
+    private Integer east;
+    private Integer west;
+    private Integer coins;
+    private Integer doorKeyId;
 
     public int getId() {
         return id;
@@ -34,35 +18,73 @@ public class Room {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public int getMapId() {
+        return mapId;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setMapId(int mapId) {
+        this.mapId = mapId;
     }
 
-    public int getSouth() {
+    public Integer getNorth() {
+        return north;
+    }
+
+    public void setNorth(Integer north) {
+        this.north = north;
+    }
+
+    public Integer getSouth() {
         return south;
     }
 
-    public void setSouth(int south) {
+    public void setSouth(Integer south) {
         this.south = south;
     }
 
-    public int getEast() {
+    public Integer getEast() {
         return east;
     }
 
-    public void setEast(int east) {
+    public void setEast(Integer east) {
         this.east = east;
     }
 
-    public int getWest() {
+    public Integer getWest() {
         return west;
     }
 
-    public void setWest(int west) {
+    public void setWest(Integer west) {
         this.west = west;
+    }
+
+    public Integer getCoins() {
+        return coins;
+    }
+
+    public void setCoins(Integer coins) {
+        this.coins = coins;
+    }
+
+    public Integer getDoorKeyId() {
+        return doorKeyId;
+    }
+
+    public void setDoorKeyId(Integer doorKeyId) {
+        this.doorKeyId = doorKeyId;
+    }
+
+    @Override
+    public String toString() {
+        return "Room{" +
+                "id=" + id +
+                ", mapId=" + mapId +
+                ", north=" + north +
+                ", south=" + south +
+                ", east=" + east +
+                ", west=" + west +
+                ", coins=" + coins +
+                ", doorKeyId=" + doorKeyId +
+                '}';
     }
 }

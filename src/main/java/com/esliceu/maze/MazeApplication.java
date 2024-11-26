@@ -22,5 +22,4 @@ public class MazeApplication implements WebMvcConfigurer {
 				loginInterceptor
 		).addPathPatterns("/start");
 	}
-
 }

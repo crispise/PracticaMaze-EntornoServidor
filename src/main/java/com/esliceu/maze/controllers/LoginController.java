@@ -23,7 +23,6 @@ public class LoginController {
     public String getLogin() {
         return "login";
     }
-
     @PostMapping("/login")
     public String login(Model m, HttpSession session, @RequestParam String username, @RequestParam String password) throws NoSuchAlgorithmException {
         User user = loginService.checkUser(username,password);

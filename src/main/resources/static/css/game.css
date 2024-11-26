@@ -1,0 +1,9 @@
+#crossContainer{
+    min-width: 10%;
+    width: 10%;
+}
+#crossContainer img {
+    width: 100%;     /* Ajusta el ancho de la imagen al 100% del contenedor */
+    height: 100%;    /* Ajusta la altura de la imagen al 100% del contenedor */
+    object-fit: contain;  /* Asegura que la imagen mantenga su proporción sin recortarse */
+}

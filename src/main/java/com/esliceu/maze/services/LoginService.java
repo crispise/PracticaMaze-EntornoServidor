@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.security.NoSuchAlgorithmException;
-import java.util.List;
 
 @Service
 public class LoginService {
@@ -18,13 +17,10 @@ public class LoginService {
     Encryptor encryptor;
 
     public User checkUser(String username, String password) throws NoSuchAlgorithmException {
-        User u = userDAO.findUserByUsername(username);
+        User u = userDAO.getUserByUsername(username);
         String encryptPassw = encryptor.encryptString(password);
-
         if (u != null) {
-            System.out.println("hay user");
             if (u.getPassword().equals(encryptPassw)) {
-                System.out.println("el paswword concuerda");
                 return u;
             }
         }

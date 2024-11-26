@@ -2,9 +2,13 @@ package com.esliceu.maze.dao;
 
 import com.esliceu.maze.model.User;
 
-import java.util.List;
-
 public interface UserDAO {
-    User findUserByUsername(String username);
+    User getUserByUsername(String username);
     void saveUser(User user);
+
+    void updateUserRoomStatus(String username, int roomId);
+
+    void updateTotalUserCoins(String username, int totalCoins);
+
+    void updateTotalUserKeys(String username, String userKeys);
 }

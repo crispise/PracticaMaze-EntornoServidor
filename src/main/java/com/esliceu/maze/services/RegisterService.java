@@ -9,8 +9,6 @@ import com.esliceu.maze.utils.Encryptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.security.NoSuchAlgorithmException;
-
 @Service
 public class RegisterService {
  @Autowired
@@ -24,17 +22,12 @@ public class RegisterService {
     boolean correctName = checkNameLength(name);
 
     if (!correctUsername) {
-        System.out.println("entra en username incorrecto");
         throw new UserExistsException ("El username ya existe.");
     } else if (!correctPassword) {
-        System.out.println("entra en password incorrecto");
         throw new PasswordTooShortException("La contraseña tiene que tener un mínimo de 5 carácteres.");
     } else if (!correctName) {
-        System.out.println("entra en nombre incorrecto");
         throw new NameTooShortException("El nombre es demasiado corto, tiene que tener 6 carácteres.");
     }
-     System.out.println("fuera del if crea usuario");
-
      User user = new User();
      user.setName(name);
      user.setUsername(username);
@@ -57,7 +50,7 @@ public class RegisterService {
     }
 
     private boolean checkIfUsernameExists(String username) {
-        User user = userDAO.findUserByUsername(username);
+        User user = userDAO.getUserByUsername(username);
      if (user != null) {
          System.out.println("el usuario es nulo");
          return false;

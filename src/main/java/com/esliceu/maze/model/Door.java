@@ -4,7 +4,8 @@ public class Door {
     private int id;
     private int room1Id;
     private int room2Id;
-    private boolean state; //true = open, false = close
+    private int state; //1 = open, 0 = close
+    private Integer doorKeyId;
 
     public int getId() {
         return id;
@@ -30,12 +31,30 @@ public class Door {
         this.room2Id = room2Id;
     }
 
-    public boolean isState() {
+    public int getState() {
         return state;
     }
 
-    public void setState(boolean state) {
+    public void setState(int state) {
         this.state = state;
     }
 
+    public Integer getDoorKeyId() {
+        return doorKeyId;
+    }
+
+    public void setDoorKeyId(Integer doorKeyId) {
+        this.doorKeyId = doorKeyId;
+    }
+
+    @Override
+    public String toString() {
+        return "Door{" +
+                "id=" + id +
+                ", room1Id=" + room1Id +
+                ", room2Id=" + room2Id +
+                ", state=" + state +
+                ", doorKeyId=" + doorKeyId +
+                '}';
+    }
 }
