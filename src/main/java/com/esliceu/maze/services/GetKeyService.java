@@ -25,16 +25,16 @@ public class GetKeyService {
     public String ckeckClickInKey(String username) {
         User user = userDAO.getUserByUsername(username);
         UserRooms actualUserRoom = userRoomsDAO.getUserRoomByRoomIdAndUserId(user.getId(), user.getRoomId());
-        if (actualUserRoom.getDoorKeyId() != null){
+        if (actualUserRoom.getDoorKeyId() != null) {
             DoorKey doorKey = doorKeyDAO.getKeyById(actualUserRoom.getDoorKeyId());
             if (user.getCoins() >= doorKey.getNeededCoins()) {
                 return addKeyToUser(doorKey, user, actualUserRoom);
-            }else {
+            } else {
                 int coins = doorKey.getNeededCoins() - user.getCoins();
                 return startService.createJson(username, actualUserRoom, "Te faltan " + coins + " monedas.");
             }
         }
-        return startService.createJson(username, actualUserRoom, "En esta habitación no hay llaves." );
+        return startService.createJson(username, actualUserRoom, "En esta habitación no hay llaves.");
     }
 
     private String addKeyToUser(DoorKey doorKey, User user, UserRooms actualUserRoom) {

@@ -18,15 +18,14 @@ public class UserDAOImplem implements UserDAO {
         try {
             return jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(User.class), username);
         } catch (EmptyResultDataAccessException e) {
-            // If no user is found, return null
             return null;
         }
     }
 
     @Override
     public void saveUser(User user) {
-       jdbcTemplate.update("insert into users (name, username, password) values (?,?,?)",
-        user.getName(), user.getUsername(), user.getPassword());
+        jdbcTemplate.update("insert into users (name, username, password) values (?,?,?)",
+                user.getName(), user.getUsername(), user.getPassword());
     }
 
     @Override

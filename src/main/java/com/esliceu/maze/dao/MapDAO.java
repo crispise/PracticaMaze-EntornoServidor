@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface MapDAO {
     List<Map> getAllMaps();
+
     Map getMapById(int id);
 }

@@ -78,7 +78,17 @@ public class StartService {
     }
 
     private String getKeysInfo(User user) {
-        String idKeys = user.getIdKeys();
+        if (user.getIdKeys() != null) {
+            List<String> idKeys = Arrays.asList(user.getIdKeys().split(","));
+            StringBuilder stringBuilder = new StringBuilder();
+            for (int i = 0; i < idKeys.size(); i++) {
+                stringBuilder.append("Llave ").append(idKeys.get(i));
+                if (i != idKeys.size() - 1) {
+                    stringBuilder.append(",");
+                }
+            }
+            return stringBuilder.toString();
+        }
         return "";
     }
 

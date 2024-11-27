@@ -9,17 +9,17 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @SpringBootApplication
 public class MazeApplication implements WebMvcConfigurer {
-	@Autowired
-	LoginInterceptor loginInterceptor;
+    @Autowired
+    LoginInterceptor loginInterceptor;
 
-	public static void main(String[] args) {
-		SpringApplication.run(MazeApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(MazeApplication.class, args);
+    }
 
-	@Override
-	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(
-				loginInterceptor
-		).addPathPatterns("/start");
-	}
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(
+                loginInterceptor
+        ).addPathPatterns("/start", "/nav", "/getcoin", "/getkey", "/reset");
+    }
 }

@@ -1,6 +1,7 @@
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
 const errorContainer = document.getElementById("errorContainer");
+const infoUserGame = document.getElementById("infoGame");
 const borderWidth = 40;
 const squareSize = canvas.width - 2 * borderWidth;
 const x = borderWidth;
@@ -19,6 +20,12 @@ function drawWall() {
     ctx.lineWidth = borderWidth;
     ctx.strokeStyle = 'black';
     ctx.strokeRect(x, y, squareSize, squareSize);
+}
+function drawUserInfo(roomInfo) {
+    infoUserGame.innerHTML = `
+    <div>Habitación: ${roomInfo.userRoom}</div>
+    <div>Llaves: ${roomInfo.userKeys}</div>
+    <div>Monedas: ${roomInfo.userCoins}</div>`
 }
 function drawDoor(state, direction) {
     const doorColor = state === 0 ? "red" : "white"; // 0: cerrado, 1: abierto
@@ -118,6 +125,7 @@ function drawKey(roomInfo) {
 
 function drawRoom(roomInfo) {
     drawWall()
+    drawUserInfo(roomInfo)
     searchDoors(roomInfo)
     if (roomInfo.errorMessage != ""){
         errorContainer.innerText = roomInfo.errorMessage;
@@ -125,8 +133,6 @@ function drawRoom(roomInfo) {
     if (roomInfo.coins > 0){drawCoins(roomInfo)}
     if (roomInfo.keys > 0){drawKey(roomInfo)}
 }
-
-obteinInfo()
 
 document.getElementById('flechasImg').addEventListener('click', function(event) {
     const img = event.target;
@@ -166,9 +172,8 @@ function detectCoinClick(event) {
         mouseY >= coin.y &&
         mouseY <= coin.y + coin.size
         ) {
-            console.log(`Hiciste clic en la moneda ${i + 1}`);
             window.location.href = `/getcoin`;
-            return; // Sal del bucle al encontrar la moneda clicada
+            return;
         }
     }
 
@@ -179,19 +184,12 @@ function detectKeyClick(event) {
     const rect = canvas.getBoundingClientRect(); // Coordenadas del canvas en la pantalla
     const mouseX = event.clientX - rect.left; // Coordenada X relativa al canvas
     const mouseY = event.clientY - rect.top; // Coordenada Y relativa al canvas
-    if (
-    mouseX >= keyPosition.x &&
-    mouseX <= keyPosition.x + keyPosition.size &&
-    mouseY >= keyPosition.y &&
-    mouseY <= keyPosition.y + keyPosition.size
-    ) {
+    if ( mouseX >= keyPosition.x && mouseX <= keyPosition.x + keyPosition.size && mouseY >= keyPosition.y &&  mouseY <= keyPosition.y + keyPosition.size) {
         window.location.href = `/getkey`;
-        return; // Sal del bucle al encontrar la moneda clicad
-    } else {
-        console.log("Clic fuera de la llave");
+        return;
     }
 }
 
-
+obteinInfo()
 canvas.addEventListener("click", detectKeyClick);
 canvas.addEventListener("click", detectCoinClick);

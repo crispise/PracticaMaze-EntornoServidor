@@ -10,8 +10,6 @@ import com.esliceu.maze.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 public class ResetService {
     @Autowired
@@ -24,6 +22,7 @@ public class ResetService {
     StartService startService;
     @Autowired
     UserRoomsDAO userRoomsDAO;
+
     public void resetGame(String username) {
         User user = userDAO.getUserByUsername(username);
         Room actualRoom = roomDAO.getRoomById(user.getRoomId());

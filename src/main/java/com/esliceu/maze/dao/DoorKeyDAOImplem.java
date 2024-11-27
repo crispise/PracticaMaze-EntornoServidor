@@ -7,7 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class DoorKeyDAOImplem implements DoorKeyDAO{
+public class DoorKeyDAOImplem implements DoorKeyDAO {
     @Autowired
     JdbcTemplate jdbcTemplate;
 

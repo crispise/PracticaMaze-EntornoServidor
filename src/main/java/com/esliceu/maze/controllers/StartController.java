@@ -12,27 +12,24 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-
 @Controller
 public class StartController {
     @Autowired
     StartService startService;
+
     @GetMapping("/start")
     public String startPage(Model m) {
         List<Map> maps = startService.getAllMaps();
         m.addAttribute("maps", maps);
-      return "start";
+        return "start";
     }
+
     @PostMapping("/start")
-    public String selectMap(Model m, @RequestParam String mapId, HttpSession session){
+    public String selectMap(Model m, @RequestParam String mapId, HttpSession session) {
         String username = (String) session.getAttribute("user");
         String jsonToSend = startService.getFirstJson(mapId, username);
         System.out.println(jsonToSend);
         m.addAttribute("jsonInfo", jsonToSend);
         return "game";
     }
-
-
-
-
 }

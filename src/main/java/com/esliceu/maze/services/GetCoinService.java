@@ -1,6 +1,5 @@
 package com.esliceu.maze.services;
 
-import com.esliceu.maze.dao.RoomDAO;
 import com.esliceu.maze.dao.UserDAO;
 import com.esliceu.maze.dao.UserRoomsDAO;
 import com.esliceu.maze.model.User;
@@ -25,7 +24,7 @@ public class GetCoinService {
             int userTotalCoins;
             if (user.getCoins() == null) {
                 userTotalCoins = 1;
-            }else {
+            } else {
                 userTotalCoins = user.getCoins() + 1;
             }
             int roomTotalCoins = actualUserRoom.getCoins() - 1;

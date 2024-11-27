@@ -11,8 +11,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class ResetController {
     @Autowired
     ResetService resetService;
+
     @GetMapping("/reset")
-    public String reset (Model m, HttpSession session) {
+    public String reset(Model m, HttpSession session) {
         String username = (String) session.getAttribute("user");
         resetService.resetGame(username);
         session.invalidate();

@@ -6,5 +6,6 @@ import java.util.List;
 
 public interface DoorDAO {
     List<Door> findAllDoorsByRoomId(int roomId);
-    Door getDoorById (int doorId);
+
+    Door getDoorById(int doorId);
 }

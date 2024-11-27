@@ -12,8 +12,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class NavController {
     @Autowired
     NavService navService;
+
     @GetMapping("/nav")
-    public String move(Model m, @RequestParam("dir") String direction, HttpSession session){
+    public String move(Model m, @RequestParam("dir") String direction, HttpSession session) {
         String username = (String) session.getAttribute("user");
         String jsonToSend = navService.trySelectedDirection(direction, username);
         m.addAttribute("jsonInfo", jsonToSend);

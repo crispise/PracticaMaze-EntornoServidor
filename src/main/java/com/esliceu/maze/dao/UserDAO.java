@@ -4,6 +4,7 @@ import com.esliceu.maze.model.User;
 
 public interface UserDAO {
     User getUserByUsername(String username);
+
     void saveUser(User user);
 
     void updateUserRoomStatus(String username, int roomId);

@@ -11,8 +11,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class GetKeyController {
     @Autowired
     GetKeyService getKeyService;
+
     @GetMapping("/getkey")
-    public String getKey (Model m, HttpSession session){
+    public String getKey(Model m, HttpSession session) {
         String username = (String) session.getAttribute("user");
         String jsonToSend = getKeyService.ckeckClickInKey(username);
         m.addAttribute("jsonInfo", jsonToSend);

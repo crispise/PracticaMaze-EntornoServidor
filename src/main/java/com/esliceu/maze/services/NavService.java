@@ -35,15 +35,15 @@ public class NavService {
         if (roomDoor != null) {
             if (roomDoor.getState() == 1) {
                 if (roomDoor.getRoom1Id() == actualUserRoom.getRoomId()) {
-                    newUserRooms = userRoomsDAO.getUserRoomByRoomIdAndUserId(user.getId(),roomDoor.getRoom2Id());
+                    newUserRooms = userRoomsDAO.getUserRoomByRoomIdAndUserId(user.getId(), roomDoor.getRoom2Id());
                 } else if (roomDoor.getRoom2Id() == actualUserRoom.getRoomId()) {
-                    newUserRooms = userRoomsDAO.getUserRoomByRoomIdAndUserId(user.getId(),roomDoor.getRoom1Id());
+                    newUserRooms = userRoomsDAO.getUserRoomByRoomIdAndUserId(user.getId(), roomDoor.getRoom1Id());
                 }
-                return startService.createJson(username,newUserRooms, "");
+                return startService.createJson(username, newUserRooms, "");
             }
-            return startService.createJson(username, actualUserRoom,"La puerta esta cerrada");
+            return startService.createJson(username, actualUserRoom, "La puerta esta cerrada");
         }
-        return startService.createJson(username, actualUserRoom,"No hay puertas en esa dirección");
+        return startService.createJson(username, actualUserRoom, "No hay puertas en esa dirección");
     }
 
     private Door findDoor(String direction, UserRooms actualUserRoom) {
@@ -68,5 +68,4 @@ public class NavService {
                 return null;
         }
     }
-
 }

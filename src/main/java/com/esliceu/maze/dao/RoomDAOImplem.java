@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public class RoomDAOImplem implements RoomDAO{
+public class RoomDAOImplem implements RoomDAO {
     @Autowired
     JdbcTemplate jdbcTemplate;
 
@@ -21,6 +21,7 @@ public class RoomDAOImplem implements RoomDAO{
 
     @Override
     public List<Room> getAllRoomsByMapId(int mapId) {
-        return jdbcTemplate.query("select * from room where mapId = ?",new BeanPropertyRowMapper<>(Room.class), mapId);
+        return jdbcTemplate.query("select * from room where mapId = ?",
+                new BeanPropertyRowMapper<>(Room.class), mapId);
     }
 }
