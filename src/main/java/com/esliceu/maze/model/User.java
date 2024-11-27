@@ -12,6 +12,7 @@ public class User {
     private Integer coins;
     private Integer gameTime;
     private String idKeys;
+    private String openDoors;
 
 
     public int getId() {
@@ -78,6 +79,14 @@ public class User {
         this.idKeys = idKeys;
     }
 
+    public String getOpenDoors() {
+        return openDoors;
+    }
+
+    public void setOpenDoors(String openDoors) {
+        this.openDoors = openDoors;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -86,9 +95,10 @@ public class User {
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", roomId=" + roomId +
-                ", idKeys='" + idKeys + '\'' +
                 ", coins=" + coins +
                 ", gameTime=" + gameTime +
+                ", idKeys='" + idKeys + '\'' +
+                ", openDoors='" + openDoors + '\'' +
                 '}';
     }
 }

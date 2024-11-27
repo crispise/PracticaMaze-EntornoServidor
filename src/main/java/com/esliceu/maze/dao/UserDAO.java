@@ -13,5 +13,7 @@ public interface UserDAO {
 
     void updateTotalUserKeys(String username, String userKeys);
 
-    void resetUser(Object roomId, int i, Object o, Object o1, String username);
+    void updateOpenDoors(String username, String doorKeyId);
+
+    void resetUser(Object roomId, int initialCoins, Object gameTime, Object idKeys, Object openDoors, String username);
 }

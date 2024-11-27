@@ -27,29 +27,50 @@ function drawUserInfo(roomInfo) {
     <div>Llaves: ${roomInfo.userKeys}</div>
     <div>Monedas: ${roomInfo.userCoins}</div>`
 }
+const doorPositions = []; // Guardará las coordenadas y estados de las puertas
+function pushDoorToDoorPositions(state, x,y,doorWidth, doorHeight, direction){
+    if (state === 0) {
+        doorPositions.push({
+            x,
+            y,
+            width: doorWidth,
+            height: doorHeight,
+            direction,
+        });
+    }
+
+}
 function drawDoor(state, direction) {
     const doorColor = state === 0 ? "red" : "white"; // 0: cerrado, 1: abierto
     ctx.fillStyle = doorColor;
     ctx.lineWidth = borderWidth;
+    const doorWidth = 40;
+    const doorHeight = 40;
+    let x, y;
     switch (direction) {
         case "north":
-            ctx.fillRect(squareSize / 2 + borderWidth / 2, 20, 40, 40);
+            x = squareSize / 2 + borderWidth / 2;
+            y = 20;
             break;
         case "south":
-            ctx.fillRect(squareSize / 2 + borderWidth / 2, squareSize+20, 40, 40);
+            x = squareSize / 2 + borderWidth / 2;
+            y = squareSize + 20;
             break;
         case "east":
-            ctx.fillRect(squareSize + borderWidth / 2, squareSize / 2 + 20, 40, 40);
+            x = squareSize + borderWidth / 2;
+            y = squareSize / 2 + 20;
             break;
         case "west":
-            ctx.fillRect(20, squareSize / 2 + 20, 40, 40);
+            x = 20;
+            y = squareSize / 2 + 20;
             break;
     }
+    ctx.fillRect(x, y, doorWidth, doorHeight);
+    pushDoorToDoorPositions(state,x,y,doorWidth, doorHeight, direction)
+
 }
 function searchDoors(room) {
     let doors = room.doors;
-    console.log(doors)
-    console.log(room)
     if (doors) {
         if (room.north !== undefined) {
             let northDoor = doors.find(door => door.doorId === room.north);
@@ -96,7 +117,7 @@ function drawCoins(roomInfo) {
     const coinImagePath = "./img/coin.png";
     const coinImage = new Image();
     coinImage.src = coinImagePath;
-    const coinSize = 60; // Tamaño de las monedas
+    const coinSize = 60;
     const padding = 10; // Espacio entre monedas
     const wallPadding = 20; // Espacio entre las monedas y las paredes del cuadro
     const coinsPerRow = Math.floor((squareSize - 2 * wallPadding) / (coinSize + padding));
@@ -106,12 +127,11 @@ function drawCoins(roomInfo) {
 }
 let keyPosition = null;
 
-// Función para dibujar la llave
 function drawKey(roomInfo) {
-    const keyImagePath = "./img/key.png"; // Ruta de la imagen de la llave
+    const keyImagePath = "./img/key.png";
     const keyImage = new Image();
     keyImage.src = keyImagePath;
-    const keySize = 70; // Tamaño de la llave
+    const keySize = 70;
     const wallPadding = 50; // Espacio entre la llave y las paredes del cuadro
 
     keyImage.onload = function () {
@@ -121,8 +141,6 @@ function drawKey(roomInfo) {
         keyPosition = { x: xPos, y: yPos, size: keySize };
     };
 }
-
-
 function drawRoom(roomInfo) {
     drawWall()
     drawUserInfo(roomInfo)
@@ -133,7 +151,13 @@ function drawRoom(roomInfo) {
     if (roomInfo.coins > 0){drawCoins(roomInfo)}
     if (roomInfo.keys > 0){drawKey(roomInfo)}
 }
-
+function getMousePosition(event, canvas) {
+    const rect = canvas.getBoundingClientRect();
+    return {
+        x: event.clientX - rect.left,
+        y: event.clientY - rect.top,
+    };
+}
 document.getElementById('flechasImg').addEventListener('click', function(event) {
     const img = event.target;
     const rect = img.getBoundingClientRect();  // Obtenemos el tamaño y la posición de la imagen
@@ -159,11 +183,7 @@ document.getElementById('flechasImg').addEventListener('click', function(event) 
 });
 
 function detectCoinClick(event) {
-    const rect = canvas.getBoundingClientRect(); // Coordenadas del canvas en la pantalla
-    const mouseX = event.clientX - rect.left; // Coordenada X relativa al canvas
-    const mouseY = event.clientY - rect.top; // Coordenada Y relativa al canvas
-
-    // Busca si el clic está dentro de alguna moneda
+    const { x: mouseX, y: mouseY } = getMousePosition(event, canvas);
     for (let i = 0; i < coinPositions.length; i++) {
         const coin = coinPositions[i];
         if (
@@ -176,20 +196,31 @@ function detectCoinClick(event) {
             return;
         }
     }
-
-    console.log("No hiciste clic en ninguna moneda");
 }
 function detectKeyClick(event) {
     if (!keyPosition) return;
-    const rect = canvas.getBoundingClientRect(); // Coordenadas del canvas en la pantalla
-    const mouseX = event.clientX - rect.left; // Coordenada X relativa al canvas
-    const mouseY = event.clientY - rect.top; // Coordenada Y relativa al canvas
+    const { x: mouseX, y: mouseY } = getMousePosition(event, canvas);
     if ( mouseX >= keyPosition.x && mouseX <= keyPosition.x + keyPosition.size && mouseY >= keyPosition.y &&  mouseY <= keyPosition.y + keyPosition.size) {
         window.location.href = `/getkey`;
         return;
     }
 }
-
+function detectCloseDoorClick(event) {
+    const { x: mouseX, y: mouseY } = getMousePosition(event, canvas);
+    for (const door of doorPositions) {
+        if (
+        mouseX >= door.x &&
+        mouseX <= door.x + door.width &&
+        mouseY >= door.y &&
+        mouseY <= door.y + door.height
+        ) {
+            window.location.href = `/open?dir=${door.direction}`;
+            return;
+        }
+    }
+}
 obteinInfo()
 canvas.addEventListener("click", detectKeyClick);
 canvas.addEventListener("click", detectCoinClick);
+canvas.addEventListener("click", detectCloseDoorClick);
+

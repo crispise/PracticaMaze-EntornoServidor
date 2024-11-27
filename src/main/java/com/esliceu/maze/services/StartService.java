@@ -2,14 +2,12 @@ package com.esliceu.maze.services;
 
 import com.esliceu.maze.dao.*;
 import com.esliceu.maze.model.*;
+import com.esliceu.maze.model.Map;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 
 @Service
@@ -24,7 +22,6 @@ public class StartService {
     UserDAO userDAO;
     @Autowired
     UserRoomsDAO userRoomsDAO;
-
 
     public List<Map> getAllMaps() {
         return mapDAO.getAllMaps();
@@ -46,11 +43,10 @@ public class StartService {
         userDAO.updateUserRoomStatus(username, userRooms.getRoomId());
         User user = userDAO.getUserByUsername(username);
         List<Door> doors = doorDAO.findAllDoorsByRoomId(userRooms.getRoomId());
-
         HashMap<String, Object> mapa = new HashMap<>();
-        if (checkIfUserHasKey(user, userRooms)) {
-            mapa.put("keys", userRooms.getDoorKeyId());
-        }
+        if (checkIfUserHasKey(user, userRooms)) mapa.put("keys", userRooms.getDoorKeyId());
+        if (user.getOpenDoors() != null) updateDoorState(user, doors);
+        if (checkFinalRoom(user)) mapa.put("finalRoom", user.getRoomId());
         mapa.put("north", userRooms.getNorth());
         mapa.put("south", userRooms.getSouth());
         mapa.put("east", userRooms.getEast());
@@ -63,6 +59,22 @@ public class StartService {
         mapa.put("errorMessage", errorMessage);
         Gson gson = new Gson();
         return gson.toJson(mapa);
+    }
+
+    private boolean checkFinalRoom(User user) {
+        Room room = roomDAO.getRoomById(user.getRoomId());
+        Map map = mapDAO.getMapById(room.getMapId());
+        if (user.getRoomId() == map.getFinishRoomId()) return true;
+        return false;
+    }
+
+    private static void updateDoorState(User user, List<Door> doors) {
+        Set<String> openDoorIds = new HashSet<>(Arrays.asList(user.getOpenDoors().split(",")));
+        for (Door door : doors) {
+            if (openDoorIds.contains(String.valueOf(door.getId()))) {
+                door.setState(1);
+            }
+        }
     }
 
     private boolean checkIfUserHasKey(User user, UserRooms userRooms) {

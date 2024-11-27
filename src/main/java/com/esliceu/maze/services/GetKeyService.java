@@ -27,6 +27,9 @@ public class GetKeyService {
         UserRooms actualUserRoom = userRoomsDAO.getUserRoomByRoomIdAndUserId(user.getId(), user.getRoomId());
         if (actualUserRoom.getDoorKeyId() != null) {
             DoorKey doorKey = doorKeyDAO.getKeyById(actualUserRoom.getDoorKeyId());
+            if (user.getCoins() == null || user.getCoins() == 0) {
+              return startService.createJson(username, actualUserRoom, "No tienes monedas");
+            }
             if (user.getCoins() >= doorKey.getNeededCoins()) {
                 return addKeyToUser(doorKey, user, actualUserRoom);
             } else {

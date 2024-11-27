@@ -1,15 +1,13 @@
 package com.esliceu.maze.services;
 
-import com.esliceu.maze.dao.DoorDAO;
-import com.esliceu.maze.dao.RoomDAO;
-import com.esliceu.maze.dao.UserDAO;
-import com.esliceu.maze.dao.UserRoomsDAO;
-import com.esliceu.maze.model.Door;
-import com.esliceu.maze.model.Room;
-import com.esliceu.maze.model.User;
-import com.esliceu.maze.model.UserRooms;
+import com.esliceu.maze.dao.*;
+import com.esliceu.maze.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 public class NavService {
@@ -20,6 +18,8 @@ public class NavService {
     @Autowired
     DoorDAO doorDAO;
     @Autowired
+    MapDAO mapDAO;
+    @Autowired
     StartService startService;
     @Autowired
     UserRoomsDAO userRoomsDAO;
@@ -27,17 +27,25 @@ public class NavService {
     public String trySelectedDirection(String direction, String username) {
         User user = userDAO.getUserByUsername(username);
         UserRooms actualUserRoom = userRoomsDAO.getUserRoomByRoomIdAndUserId(user.getId(), user.getRoomId());
-        Door roomDoor = null;
-        UserRooms newUserRooms = null;
-        if (actualUserRoom != null) {
-            roomDoor = findDoor(direction, actualUserRoom);
+        Map map = mapDAO.getMapById(actualUserRoom.getMapId());
+        if (user.getRoomId() == map.getFinishRoomId()){
+            return startService.createJson(username, actualUserRoom, "El juego ha acabado");
         }
-        if (roomDoor != null) {
-            if (roomDoor.getState() == 1) {
-                if (roomDoor.getRoom1Id() == actualUserRoom.getRoomId()) {
-                    newUserRooms = userRoomsDAO.getUserRoomByRoomIdAndUserId(user.getId(), roomDoor.getRoom2Id());
-                } else if (roomDoor.getRoom2Id() == actualUserRoom.getRoomId()) {
-                    newUserRooms = userRoomsDAO.getUserRoomByRoomIdAndUserId(user.getId(), roomDoor.getRoom1Id());
+        Door door = findDoor(direction, actualUserRoom);
+
+        if (door != null) {
+            if (user.getOpenDoors() != null){
+                Set<String> openDoorIds = new HashSet<>(Arrays.asList(user.getOpenDoors().split(",")));
+                if (openDoorIds.contains(String.valueOf(door.getId()))) {
+                     door.setState(1);
+                }
+            }
+            if (door.getState() == 1) {
+                UserRooms newUserRooms = null;
+                if (door.getRoom1Id() == actualUserRoom.getRoomId()) {
+                    newUserRooms = userRoomsDAO.getUserRoomByRoomIdAndUserId(user.getId(), door.getRoom2Id());
+                } else if (door.getRoom2Id() == actualUserRoom.getRoomId()) {
+                    newUserRooms = userRoomsDAO.getUserRoomByRoomIdAndUserId(user.getId(), door.getRoom1Id());
                 }
                 return startService.createJson(username, newUserRooms, "");
             }
@@ -46,7 +54,7 @@ public class NavService {
         return startService.createJson(username, actualUserRoom, "No hay puertas en esa dirección");
     }
 
-    private Door findDoor(String direction, UserRooms actualUserRoom) {
+    public Door findDoor(String direction, UserRooms actualUserRoom) {
         switch (direction) {
             case "north":
                 if (actualUserRoom.getNorth() != null) {
