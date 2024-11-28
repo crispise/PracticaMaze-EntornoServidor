@@ -28,7 +28,6 @@ public class StartController {
     public String selectMap(Model m, @RequestParam String mapId, HttpSession session) {
         String username = (String) session.getAttribute("user");
         String jsonToSend = startService.getFirstJson(mapId, username);
-        System.out.println(jsonToSend);
         m.addAttribute("jsonInfo", jsonToSend);
         return "game";
     }

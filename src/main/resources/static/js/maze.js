@@ -141,6 +141,20 @@ function drawKey(roomInfo) {
         keyPosition = { x: xPos, y: yPos, size: keySize };
     };
 }
+let winImagePosition = null;
+function drawFinal() {
+    const img = new Image();
+    img.src = './win.jpg';
+    img.onload = function () {
+        const xPos = borderWidth;
+        const yPos = borderWidth;
+        const width = squareSize;
+        const height = squareSize;
+        winImagePosition = { x: xPos, y: yPos, width: width, height: height };
+        ctx.drawImage(img, xPos, yPos, width, height);
+    };
+
+}
 function drawRoom(roomInfo) {
     drawWall()
     drawUserInfo(roomInfo)
@@ -150,7 +164,9 @@ function drawRoom(roomInfo) {
     }
     if (roomInfo.coins > 0){drawCoins(roomInfo)}
     if (roomInfo.keys > 0){drawKey(roomInfo)}
+    if (roomInfo.finalRoom > 0){drawFinal()}
 }
+
 function getMousePosition(event, canvas) {
     const rect = canvas.getBoundingClientRect();
     return {
@@ -217,6 +233,19 @@ function detectCloseDoorClick(event) {
             window.location.href = `/open?dir=${door.direction}`;
             return;
         }
+    }
+}
+
+function detectWinClick(event) {
+    if (!winImagePosition) return;
+    const { x: mouseX, y: mouseY } = getMousePosition(event, canvas);
+    if (
+    mouseX >= winImagePosition.x &&
+    mouseX <= winImagePosition.x + winImagePosition.width &&
+    mouseY >= winImagePosition.y &&
+    mouseY <= winImagePosition.y + winImagePosition.height
+    ) {
+        window.location.href = '/scores';
     }
 }
 obteinInfo()

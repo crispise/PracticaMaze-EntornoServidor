@@ -62,10 +62,13 @@ public class StartService {
     }
 
     private boolean checkFinalRoom(User user) {
-        Room room = roomDAO.getRoomById(user.getRoomId());
-        Map map = mapDAO.getMapById(room.getMapId());
-        if (user.getRoomId() == map.getFinishRoomId()) return true;
-        return false;
+        System.out.println("comprueba que este en la habitacion final");
+        UserRooms userRooms = userRoomsDAO.getUserRoomByRoomIdAndUserId(user.getId(), user.getRoomId());
+        Map map = mapDAO.getMapById(userRooms.getMapId());
+        if (user.getRoomId() == map.getFinishRoomId()) {
+            System.out.println("si esta en la final");
+            return true;
+        }return false;
     }
 
     private static void updateDoorState(User user, List<Door> doors) {

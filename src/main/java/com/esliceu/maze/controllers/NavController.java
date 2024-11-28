@@ -17,6 +17,8 @@ public class NavController {
     public String move(Model m, @RequestParam("dir") String direction, HttpSession session) {
         String username = (String) session.getAttribute("user");
         String jsonToSend = navService.trySelectedDirection(direction, username);
+        System.out.println("json del nav");
+        System.out.println(jsonToSend);
         m.addAttribute("jsonInfo", jsonToSend);
         return "game";
     }
