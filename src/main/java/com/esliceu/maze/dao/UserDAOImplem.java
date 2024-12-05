@@ -7,6 +7,8 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public class UserDAOImplem implements UserDAO {
     @Autowired
@@ -49,10 +51,20 @@ public class UserDAOImplem implements UserDAO {
     }
 
     @Override
-    public void resetUser(Object roomId, int initialCoins, Object gameTime, Object idKeys, Object openDoors, String username) {
+    public void resetUser(Object roomId, int initialCoins, Object gameTime, Object idKeys, Object openDoors, String username, String mapName) {
         jdbcTemplate.update(
-                "UPDATE users SET roomId = ?, coins = ?, gameTime = ?, idKeys = ?, openDoors = ? WHERE username = ?",
-                roomId, initialCoins, gameTime, idKeys, openDoors, username
+                "UPDATE users SET roomId = ?, coins = ?, gameTime = ?, idKeys = ?, openDoors = ?, mapName = ? WHERE username = ?",
+                roomId, initialCoins, gameTime, idKeys, openDoors, mapName, username
         );
+    }
+
+    @Override
+    public void updateGameTime(String username, long currentTime) {
+        jdbcTemplate.update("update users set gameTime = ? where username = ?", currentTime, username);
+    }
+
+    @Override
+    public void updateMapName(String username, String mapName) {
+        jdbcTemplate.update("update users set mapName = ? where username = ?", mapName, username);
     }
 }

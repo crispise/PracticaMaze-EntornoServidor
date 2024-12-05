@@ -7,6 +7,7 @@ import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.*;
 
 
@@ -30,6 +31,8 @@ public class StartService {
     public String getFirstJson(String mapId, String username) {
         Map map = mapDAO.getMapById(Integer.parseInt(mapId));
         User user = userDAO.getUserByUsername(username);
+        updateGameTime(user);
+        updateMapNameInUser(user, map);
         List<Room> mapRooms = roomDAO.getAllRoomsByMapId(map.getId());
         for (Room room : mapRooms) {
             userRoomsDAO.insertUserRoom(user.getId(), room.getId(), room.getMapId(),
@@ -38,6 +41,16 @@ public class StartService {
         UserRooms initialRoom = userRoomsDAO.getUserRoomByRoomIdAndUserId(user.getId(), map.getStartRoomId());
         return createJson(username, initialRoom, "");
     }
+
+    private void updateMapNameInUser(User user, Map map) {
+        userDAO.updateMapName(user.getUsername(),map.getMapName());
+    }
+
+    private void updateGameTime(User user) {
+        long currentTime = System.currentTimeMillis(); // Tiempo actual en milisegundos
+        userDAO.updateGameTime(user.getUsername(), currentTime);
+    }
+
 
     public String createJson(String username, UserRooms userRooms, String errorMessage) {
         userDAO.updateUserRoomStatus(username, userRooms.getRoomId());
@@ -62,7 +75,6 @@ public class StartService {
     }
 
     private boolean checkFinalRoom(User user) {
-        System.out.println("comprueba que este en la habitacion final");
         UserRooms userRooms = userRoomsDAO.getUserRoomByRoomIdAndUserId(user.getId(), user.getRoomId());
         Map map = mapDAO.getMapById(userRooms.getMapId());
         if (user.getRoomId() == map.getFinishRoomId()) {

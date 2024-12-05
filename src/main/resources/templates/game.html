@@ -18,6 +18,16 @@
     <a href="/reset" class="btn btn-primary btn-lg">Reset</a>
 </div>
 <div id="crossContainer"><img id="flechasImg" src="/img/flechas.png" alt="cruz"></div>
+<div class="windowFinalScore">
+    <div class="containerFormScore">
+        <h2>¡Enhorabuena, has llegado al final del mapa!</h2>
+        <p>Pon algún comentario sobre la partida y guardala</p>
+        <form method="post" action="/scores">
+        <input type="text" name="gameComent" placeholder="Ingresa tu comentario aquí">
+        <input type="submit" value="Guardar">
+        </form>
+    </div>
+</div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <script src="/js/maze.js"></script>
 </body>

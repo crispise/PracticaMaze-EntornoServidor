@@ -8,12 +8,20 @@ public class User {
     private String name;
     private String username;
     private String password;
+    private String mapName;
     private Integer roomId;
     private Integer coins;
-    private Integer gameTime;
+    private Long gameTime;
     private String idKeys;
     private String openDoors;
 
+    public String getMapName() {
+        return mapName;
+    }
+
+    public void setMapName(String mapName) {
+        this.mapName = mapName;
+    }
 
     public int getId() {
         return id;
@@ -63,11 +71,11 @@ public class User {
         this.coins = coins;
     }
 
-    public Integer getGameTime() {
+    public Long getGameTime() {
         return gameTime;
     }
 
-    public void setGameTime(Integer gameTime) {
+    public void setGameTime(Long gameTime) {
         this.gameTime = gameTime;
     }
 
@@ -94,6 +102,7 @@ public class User {
                 ", name='" + name + '\'' +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
+                ", mapName='" + mapName + '\'' +
                 ", roomId=" + roomId +
                 ", coins=" + coins +
                 ", gameTime=" + gameTime +

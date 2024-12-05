@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
 public class ResetController {
@@ -19,4 +20,12 @@ public class ResetController {
         session.invalidate();
         return "redirect:/login";
     }
+
+    @PostMapping("/resetGame")
+    public String restartGame(Model m, HttpSession session) {
+        String username = (String) session.getAttribute("user");
+        resetService.resetGame(username);
+        return "redirect:/start";
+    }
+
 }

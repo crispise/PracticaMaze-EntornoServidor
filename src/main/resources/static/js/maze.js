@@ -7,8 +7,10 @@ const squareSize = canvas.width - 2 * borderWidth;
 const x = borderWidth;
 const y = borderWidth;
 const coinPositions = [];
+const windowFormScore= document.querySelector('.windowFinalScore');
 
 function obteinInfo() {
+    windowFormScore.style.display = "none";
     if (jsonInfo) {
         let roomInfo = JSON.parse(jsonInfo)
         console.log(roomInfo)
@@ -38,8 +40,8 @@ function pushDoorToDoorPositions(state, x,y,doorWidth, doorHeight, direction){
             direction,
         });
     }
-
 }
+
 function drawDoor(state, direction) {
     const doorColor = state === 0 ? "red" : "white"; // 0: cerrado, 1: abierto
     ctx.fillStyle = doorColor;
@@ -144,7 +146,7 @@ function drawKey(roomInfo) {
 let winImagePosition = null;
 function drawFinal() {
     const img = new Image();
-    img.src = './win.jpg';
+    img.src = './img/win.jpg';
     img.onload = function () {
         const xPos = borderWidth;
         const yPos = borderWidth;
@@ -245,11 +247,12 @@ function detectWinClick(event) {
     mouseY >= winImagePosition.y &&
     mouseY <= winImagePosition.y + winImagePosition.height
     ) {
-        window.location.href = '/scores';
+        windowFormScore.style.display = "block";
     }
 }
 obteinInfo()
 canvas.addEventListener("click", detectKeyClick);
 canvas.addEventListener("click", detectCoinClick);
 canvas.addEventListener("click", detectCloseDoorClick);
+canvas.addEventListener("click", detectWinClick);
 
