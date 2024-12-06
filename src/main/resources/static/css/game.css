@@ -8,7 +8,9 @@ body {
     font-family: 'Arial', sans-serif;
     overflow: hidden;
 }
-
+.windowFinalScore{
+    display:none;
+}
 .game-container {
     background-color: rgba(0, 0, 0, 0.85);
     border-radius: 15px;

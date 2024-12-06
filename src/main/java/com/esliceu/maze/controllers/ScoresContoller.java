@@ -33,8 +33,6 @@ public class ScoresContoller {
         String username = (String) session.getAttribute("user");
         scoresService.updateScores(username, gameComent);
         List <Score> usersScores  = scoresService.obtainScores(username);
-        System.out.println("si que entra en el post`");
-        System.out.println(usersScores);
         m.addAttribute("usersScore", usersScores);
         return "scores";
     }

@@ -15,13 +15,15 @@ public class ScoresService {
     UserDAO userDAO;
     @Autowired
     ScoreDAO scoreDAO;
+    @Autowired
+    ResetService resetService;
 
 
     public void updateScores(String username, String gameComent) {
         User user = userDAO.getUserByUsername(username);
         long gameTime = calculateFinalTime(user);
         scoreDAO.insertScore(user, gameTime, gameComent);
-
+        resetService.resetGame(username);
     }
     private long calculateFinalTime(User user) {
         long currentTime = System.currentTimeMillis(); // Tiempo actual en milisegundos

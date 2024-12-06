@@ -29,18 +29,27 @@ public class StartService {
     }
 
     public String getFirstJson(String mapId, String username) {
+        System.out.println("entra en el service");
         Map map = mapDAO.getMapById(Integer.parseInt(mapId));
+        System.out.println(map);
         List<Room> mapRooms = roomDAO.getAllRoomsByMapId(map.getId());
+        System.out.println(mapRooms);
         User user = userDAO.getUserByUsername(username);
+        System.out.println("el usuario es");
+        System.out.println(user);
         updateGameTime(user);
         updateMapNameInUser(user, map);
         UserRooms actualRoom;
         if (user.getRoomId() == null) {
+            System.out.println("usuario sin habitaciones");
             updateUserRoomsWithRoomMaps(mapRooms, user);
             actualRoom = userRoomsDAO.getUserRoomByRoomIdAndUserId(user.getId(), map.getStartRoomId());
+
         }else {
             actualRoom = userRoomsDAO.getUserRoomByRoomIdAndUserId(user.getId(),user.getRoomId());
         }
+        System.out.println("habitacion actual");
+        System.out.println(actualRoom);
         return createJson(username, actualRoom, "");
     }
 
@@ -62,6 +71,7 @@ public class StartService {
 
 
     public String createJson(String username, UserRooms userRooms, String errorMessage) {
+        System.out.println("entra en crear json");
         userDAO.updateUserRoomStatus(username, userRooms.getRoomId());
         User user = userDAO.getUserByUsername(username);
         List<Door> doors = doorDAO.findAllDoorsByRoomId(userRooms.getRoomId());

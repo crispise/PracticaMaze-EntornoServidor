@@ -35,7 +35,7 @@ public class OpenService {
             if (door.getState() == 0) {
 
                 if (user.getIdKeys() == null || user.getIdKeys().isEmpty()){
-                return startService.createJson(username, actualUserRoom, "El usuario no tiene llaves");
+                return startService.createJson(username, actualUserRoom, "No tienes ninguna llave");
                 }
                 String doorKeyId = String.valueOf(door.getDoorKeyId());
                 List<String> userIdKeys = Arrays.asList(user.getIdKeys().split(","));

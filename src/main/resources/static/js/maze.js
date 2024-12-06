@@ -8,13 +8,18 @@ const x = borderWidth;
 const y = borderWidth;
 const coinPositions = [];
 const windowFormScore= document.querySelector('.windowFinalScore');
+const formScore = document.querySelector('.containerFormScore form');
 let roomInfo;
 // Creamos un canvas adicional (buffer)
 const bufferCanvas = document.createElement('canvas');
 const bufferCtx = bufferCanvas.getContext('2d');
 bufferCanvas.width = canvas.width;
 bufferCanvas.height = canvas.height;
-
+////////////////////////////////////////////////////////////////////////////////////
+formScore.addEventListener('submit', (event) => {
+    event.preventDefault(); // Evitar que se recargue la página
+    windowFormScore.style.display = "none";
+});
 /////////////////////////////////////////////////////////////////////////////////
 
 const directions = {
@@ -38,19 +43,16 @@ loadImages();
 
 const centerX = canvas.width / 2;
 const centerY = canvas.height / 2;
-const frameRate = 100;
-const steps = 40;
+const steps = 80;
 
 let currentFrame = 0;
 let animationRequest = null;
-
-
 function drawFrame(direction, currentFrame, x, y) {
     const img = loadedImages[direction][currentFrame];
-    ctx.drawImage(img, x, y, 70, 70);  // Dibujar la imagen en el canvas con tamaño ajustado
+    ctx.drawImage(img, x, y, 70, 70);
 }
-
-// Función principal para animar el movimiento
+let frameTime = 0; // Tiempo acumulado desde el último cambio de fotograma
+const frameInterval = 100;
 function animateMovement(direction, callback) {
     if (animationRequest) cancelAnimationFrame(animationRequest); // Detiene cualquier animación en curso
 
@@ -63,8 +65,10 @@ function animateMovement(direction, callback) {
     let currentY = centerY;
     let stepCount = 0;
 
-    // Función recursiva para animar
     function animate() {
+        const now = performance.now(); // Tiempo actual
+        const elapsed = now - frameTime; // Tiempo desde el último cambio de fotograma
+
         if (stepCount >= steps) {
             if (callback) callback(); // Llama al callback cuando termine el movimiento
             return;
@@ -73,7 +77,12 @@ function animateMovement(direction, callback) {
         ctx.clearRect(0, 0, canvas.width, canvas.height); // Limpiar el canvas
         drawRoom(roomInfo); // Redibujar todo el contenido (paredes, monedas, puertas, etc.)
 
-        currentFrame = (currentFrame + 1) % images.length; // Cambiar al siguiente frame de la animación
+        // Cambiar de fotograma solo si ha pasado el tiempo necesario
+        if (elapsed >= frameInterval) {
+            currentFrame = (currentFrame + 1) % images.length;
+            frameTime = now; // Actualizar el tiempo del último cambio de fotograma
+        }
+
         currentX += deltaX; // Mover en X
         currentY += deltaY; // Mover en Y
         drawFrame(direction, currentFrame, currentX, currentY); // Dibujar el personaje
@@ -81,7 +90,6 @@ function animateMovement(direction, callback) {
 
         animationRequest = requestAnimationFrame(animate);
     }
-
     animate(); // Comienza la animación
 }
 
@@ -104,7 +112,7 @@ function getDoorPosition(direction) {
 }
 //////////////////////////////////////////////////////////////////////////////////////////
 function obteinInfo() {
-    windowFormScore.style.display = "none";
+
     if (jsonInfo) {
         roomInfo = JSON.parse(jsonInfo)
         console.log(roomInfo)
@@ -123,7 +131,7 @@ function drawUserInfo(roomInfo) {
     <div>Llaves: ${roomInfo.userKeys}</div>
     <div>Monedas: ${roomInfo.userCoins}</div>`
 }
-const doorPositions = []; // Guardará las coordenadas y estados de las puertas
+const doorPositions = [];
 function pushDoorToDoorPositions(state, x,y,doorWidth, doorHeight, direction){
     if (state === 0) {
         doorPositions.push({
@@ -234,8 +242,8 @@ function drawKey(roomInfo) {
     const wallPadding = 50; // Espacio entre la llave y las paredes del cuadro
 
     keyImage.onload = function () {
-        const xPos = x + (squareSize / 2) - (keySize / 2);
-        const yPos = y + wallPadding;
+        const xPos = x + 320;
+        const yPos = y + 320;
         ctx.drawImage(keyImage, xPos, yPos, keySize, keySize);
         keyPosition = { x: xPos, y: yPos, size: keySize };
     };
