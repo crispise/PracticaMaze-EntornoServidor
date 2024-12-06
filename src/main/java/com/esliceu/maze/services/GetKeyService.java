@@ -25,19 +25,20 @@ public class GetKeyService {
     public String ckeckClickInKey(String username) {
         User user = userDAO.getUserByUsername(username);
         UserRooms actualUserRoom = userRoomsDAO.getUserRoomByRoomIdAndUserId(user.getId(), user.getRoomId());
-        if (actualUserRoom.getDoorKeyId() != null) {
-            DoorKey doorKey = doorKeyDAO.getKeyById(actualUserRoom.getDoorKeyId());
-            if (user.getCoins() == null || user.getCoins() == 0) {
-              return startService.createJson(username, actualUserRoom, "No tienes monedas");
-            }
-            if (user.getCoins() >= doorKey.getNeededCoins()) {
-                return addKeyToUser(doorKey, user, actualUserRoom);
-            } else {
-                int coins = doorKey.getNeededCoins() - user.getCoins();
-                return startService.createJson(username, actualUserRoom, "Te faltan " + coins + " monedas.");
-            }
+        if (actualUserRoom.getDoorKeyId() == null) {
+            return startService.createJson(username, actualUserRoom, "En esta habitación no hay llaves.");
         }
-        return startService.createJson(username, actualUserRoom, "En esta habitación no hay llaves.");
+        DoorKey doorKey = doorKeyDAO.getKeyById(actualUserRoom.getDoorKeyId());
+        if (user.getCoins() == null || user.getCoins() == 0) {
+            return startService.createJson(username, actualUserRoom, "No tienes monedas");
+        }
+        if (user.getCoins() >= doorKey.getNeededCoins()) {
+            userRoomsDAO.updateTotalKeys(user.getId(),actualUserRoom.getRoomId(),null);
+            return addKeyToUser(doorKey, user, actualUserRoom);
+        } else {
+            int coins = doorKey.getNeededCoins() - user.getCoins();
+            return startService.createJson(username, actualUserRoom, "Te faltan " + coins + " monedas.");
+        }
     }
 
     private String addKeyToUser(DoorKey doorKey, User user, UserRooms actualUserRoom) {

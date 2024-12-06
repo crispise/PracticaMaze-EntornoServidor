@@ -30,9 +30,9 @@ public class UserRoomsDAOImplem implements UserRoomsDAO{
     }
 
     @Override
-    public void updateTotalKeys(int userId, int roomId, int roomTotalKeys) {
+    public void updateTotalKeys(int userId, int roomId, Integer roomTotalKeys) {
         jdbcTemplate.update("UPDATE userRooms SET doorKeyId = ? WHERE roomId = ? AND userId = ?",
-                0, roomId, userId);
+                null, roomId, userId);
     }
 
     @Override

@@ -9,7 +9,7 @@ public interface UserRoomsDAO {
 
     void updateTotalCoins(int userId, int roomId, int roomTotalCoins);
 
-    void updateTotalKeys(int userId, int roomId, int roomTotalKeys);
+    void updateTotalKeys(int userId, int roomId, Integer roomTotalKeys);
 
     void deleteUserRoomsByUserIdAndMapId(int userId, int mapId);
 

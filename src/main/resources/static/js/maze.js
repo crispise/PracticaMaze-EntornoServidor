@@ -9,6 +9,12 @@ const y = borderWidth;
 const coinPositions = [];
 const windowFormScore= document.querySelector('.windowFinalScore');
 let roomInfo;
+// Creamos un canvas adicional (buffer)
+const bufferCanvas = document.createElement('canvas');
+const bufferCtx = bufferCanvas.getContext('2d');
+bufferCanvas.width = canvas.width;
+bufferCanvas.height = canvas.height;
+
 /////////////////////////////////////////////////////////////////////////////////
 
 const directions = {
@@ -18,27 +24,37 @@ const directions = {
     west: ['./img/west1.png', './img/west2.png', './img/west3.png', './img/west4.png', './img/west5.png'],
 };
 
+const loadedImages = {};
+function loadImages() {
+    for (const direction in directions) {
+        loadedImages[direction] = directions[direction].map((src) => {
+            const img = new Image();
+            img.src = src;
+            return img;
+        });
+    }
+}
+loadImages();
+
 const centerX = canvas.width / 2;
 const centerY = canvas.height / 2;
 const frameRate = 100;
-const steps = 10; // Número de pasos en el desplazamiento
+const steps = 40;
 
 let currentFrame = 0;
-let animationInterval = null;
-function drawFrame(imagePath, x, y) {
-    const img = new Image();
-    img.src = imagePath;
-    img.onload = () => {
-        ctx.drawImage(img, x, y, 70, 70); // Ajusta el tamaño del personaje según sea necesario
-    };
+let animationRequest = null;
+
+
+function drawFrame(direction, currentFrame, x, y) {
+    const img = loadedImages[direction][currentFrame];
+    ctx.drawImage(img, x, y, 70, 70);  // Dibujar la imagen en el canvas con tamaño ajustado
 }
 
-let animating;
+// Función principal para animar el movimiento
 function animateMovement(direction, callback) {
-    animating = true;
-    if (animationInterval) clearInterval(animationInterval); // Detiene cualquier animación en curso
+    if (animationRequest) cancelAnimationFrame(animationRequest); // Detiene cualquier animación en curso
 
-    const images = directions[direction]; // Obtén las imágenes de la dirección
+    const images = loadedImages[direction];
     const doorPosition = getDoorPosition(direction); // Calcula la posición de la puerta
     const deltaX = (doorPosition.x - centerX) / steps; // Cambio en X por paso
     const deltaY = (doorPosition.y - centerY) / steps; // Cambio en Y por paso
@@ -47,21 +63,26 @@ function animateMovement(direction, callback) {
     let currentY = centerY;
     let stepCount = 0;
 
-    animationInterval = setInterval(() => {
+    // Función recursiva para animar
+    function animate() {
         if (stepCount >= steps) {
-            clearInterval(animationInterval); // Finaliza la animación
-            if (callback) callback(); // Llama a la función callback después de la animación
+            if (callback) callback(); // Llama al callback cuando termine el movimiento
             return;
         }
 
         ctx.clearRect(0, 0, canvas.width, canvas.height); // Limpiar el canvas
-        currentFrame = (currentFrame + 1) % images.length;
-        currentX += deltaX; // Mueve en X
-        currentY += deltaY; // Mueve en Y
-        drawFrame(images[currentFrame], currentX, currentY);
+        drawRoom(roomInfo); // Redibujar todo el contenido (paredes, monedas, puertas, etc.)
+
+        currentFrame = (currentFrame + 1) % images.length; // Cambiar al siguiente frame de la animación
+        currentX += deltaX; // Mover en X
+        currentY += deltaY; // Mover en Y
+        drawFrame(direction, currentFrame, currentX, currentY); // Dibujar el personaje
         stepCount++;
-        drawRoom(roomInfo, animating); // Redibujar todo el contenido (paredes, monedas, puertas, etc.)
-    }, frameRate);
+
+        animationRequest = requestAnimationFrame(animate);
+    }
+
+    animate(); // Comienza la animación
 }
 
 // Función para calcular la posición de la puerta según la dirección
@@ -85,10 +106,9 @@ function getDoorPosition(direction) {
 function obteinInfo() {
     windowFormScore.style.display = "none";
     if (jsonInfo) {
-        animating = false;
         roomInfo = JSON.parse(jsonInfo)
         console.log(roomInfo)
-        drawRoom(roomInfo, animating)
+        loadRoom(roomInfo)
     } else {
         console.log("currentRoom no está definido.");
     }}
@@ -240,7 +260,6 @@ function drawCharacter() {
     frontImage.src = frontImagePath;
 
     frontImage.onload = function () {
-        // Ajustar el tamaño de la imagen (por ejemplo, reducir al 30% de su tamaño original)
         const scaleFactor = 0.35; // Reducción al 30% de su tamaño original
         const newWidth = frontImage.width * scaleFactor;
         const newHeight = frontImage.height * scaleFactor;
@@ -250,8 +269,7 @@ function drawCharacter() {
         ctx.drawImage(frontImage, centerX, centerY, newWidth, newHeight);
     };
 }
-function drawRoom(roomInfo, animating) {
-    console.log(animating)
+function drawRoom(roomInfo) {
     drawWall()
     drawUserInfo(roomInfo)
     searchDoors(roomInfo)
@@ -261,11 +279,28 @@ function drawRoom(roomInfo, animating) {
     if (roomInfo.coins > 0){drawCoins(roomInfo)}
     if (roomInfo.keys > 0){drawKey(roomInfo)}
     if (roomInfo.finalRoom > 0){drawFinal()
-    }else if(!animating) {
-        console.log("dentro de dibujar caracter")
-        drawCharacter();
     }
 }
+function drawStaticElements(roomInfo) {
+    bufferCtx.clearRect(0, 0, bufferCanvas.width, bufferCanvas.height);  // Limpiar el buffer
+    drawWall();
+    drawUserInfo(roomInfo);
+    searchDoors(roomInfo);
+    if (roomInfo.errorMessage != "") {
+        errorContainer.innerText = roomInfo.errorMessage;
+    }
+    if (roomInfo.coins > 0) { drawCoins(roomInfo); }
+    if (roomInfo.keys > 0) { drawKey(roomInfo); }
+    if (roomInfo.finalRoom > 0){drawFinal()}
+}
+function loadRoom(roomInfo) {
+    drawStaticElements(roomInfo);  // Dibujamos los elementos estáticos (fondo)
+    if (roomInfo.finalRoom == 0 || roomInfo.finalRoom == null){
+        drawCharacter();  // Dibujamos al personaje estático por primera vez
+    }
+    ctx.drawImage(bufferCanvas, 0, 0);  // Copiar el contenido del buffer al canvas principal
+}
+
 
 function getMousePosition(event, canvas) {
     const rect = canvas.getBoundingClientRect();
