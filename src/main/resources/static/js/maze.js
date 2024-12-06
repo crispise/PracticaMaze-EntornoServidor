@@ -8,13 +8,87 @@ const x = borderWidth;
 const y = borderWidth;
 const coinPositions = [];
 const windowFormScore= document.querySelector('.windowFinalScore');
+let roomInfo;
+/////////////////////////////////////////////////////////////////////////////////
 
+const directions = {
+    north: ['./img/north1.png', './img/north2.png', './img/north3.png', './img/north4.png', './img/north5.png'],
+    south: ['./img/south1.png', './img/south2.png', './img/south3.png', './img/south4.png', './img/south5.png'],
+    east: ['./img/east1.png', './img/east2.png', './img/east3.png', './img/east4.png', './img/east5.png'],
+    west: ['./img/west1.png', './img/west2.png', './img/west3.png', './img/west4.png', './img/west5.png'],
+};
+
+const centerX = canvas.width / 2;
+const centerY = canvas.height / 2;
+const frameRate = 100;
+const steps = 10; // Número de pasos en el desplazamiento
+
+let currentFrame = 0;
+let animationInterval = null;
+function drawFrame(imagePath, x, y) {
+    const img = new Image();
+    img.src = imagePath;
+    img.onload = () => {
+        ctx.drawImage(img, x, y, 70, 70); // Ajusta el tamaño del personaje según sea necesario
+    };
+}
+
+let animating;
+function animateMovement(direction, callback) {
+    animating = true;
+    if (animationInterval) clearInterval(animationInterval); // Detiene cualquier animación en curso
+
+    const images = directions[direction]; // Obtén las imágenes de la dirección
+    const doorPosition = getDoorPosition(direction); // Calcula la posición de la puerta
+    const deltaX = (doorPosition.x - centerX) / steps; // Cambio en X por paso
+    const deltaY = (doorPosition.y - centerY) / steps; // Cambio en Y por paso
+
+    let currentX = centerX;
+    let currentY = centerY;
+    let stepCount = 0;
+
+    animationInterval = setInterval(() => {
+        if (stepCount >= steps) {
+            clearInterval(animationInterval); // Finaliza la animación
+            if (callback) callback(); // Llama a la función callback después de la animación
+            return;
+        }
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height); // Limpiar el canvas
+        currentFrame = (currentFrame + 1) % images.length;
+        currentX += deltaX; // Mueve en X
+        currentY += deltaY; // Mueve en Y
+        drawFrame(images[currentFrame], currentX, currentY);
+        stepCount++;
+        drawRoom(roomInfo, animating); // Redibujar todo el contenido (paredes, monedas, puertas, etc.)
+    }, frameRate);
+}
+
+// Función para calcular la posición de la puerta según la dirección
+function getDoorPosition(direction) {
+    const doorWidth = 70;
+    const doorHeight = 40;
+    const squareSize = canvas.width - 2 * 40; // Tamaño del área de juego (sin bordes)
+
+    switch (direction) {
+        case "north":
+            return { x: centerX - doorWidth / 2, y: 40 - doorHeight / 2 }; // Posición en el borde superior
+        case "south":
+            return { x: centerX - doorWidth / 2, y: 40 + squareSize - doorHeight / 2 }; // Posición en el borde inferior
+        case "east":
+            return { x: 40 + squareSize - doorHeight / 2, y: centerY - doorWidth / 2 }; // Posición en el borde derecho
+        case "west":
+            return { x: 40 - doorHeight / 2, y: centerY - doorWidth / 2 }; // Posición en el borde izquierdo
+    }
+}
+//////////////////////////////////////////////////////////////////////////////////////////
 function obteinInfo() {
     windowFormScore.style.display = "none";
     if (jsonInfo) {
-        let roomInfo = JSON.parse(jsonInfo)
+        animating = false;
+        roomInfo = JSON.parse(jsonInfo)
         console.log(roomInfo)
-        drawRoom(roomInfo)
+        drawRoom(roomInfo, animating)
     } else {
         console.log("currentRoom no está definido.");
     }}
@@ -43,33 +117,38 @@ function pushDoorToDoorPositions(state, x,y,doorWidth, doorHeight, direction){
 }
 
 function drawDoor(state, direction) {
-    const doorColor = state === 0 ? "red" : "balck"; // 0: cerrado, 1: abierto
+    const doorColor = state === 0 ? "red" : "black"; // 0: cerrado, 1: abierto
     ctx.fillStyle = doorColor;
-    ctx.lineWidth = borderWidth;
-    const doorWidth = 40;
-    const doorHeight = 40;
-    let x, y;
+    const centerX = x + squareSize / 2; // Centro del área dibujable en X
+    const centerY = y + squareSize / 2; // Centro del área dibujable en Y
+    let doorX, doorY;
+
     switch (direction) {
         case "north":
-            x = squareSize / 2 + borderWidth / 2;
-            y = 20;
+            doorX = centerX - 70 / 2;
+            doorY = y - 40 / 2;
+            ctx.fillRect(doorX, doorY, 70, 40);
+            pushDoorToDoorPositions(state, doorX, doorY, 70, 40, direction);
             break;
         case "south":
-            x = squareSize / 2 + borderWidth / 2;
-            y = squareSize + 20;
+            doorX = centerX - 70 / 2;
+            doorY = y + squareSize - 40 / 2;
+            ctx.fillRect(doorX, doorY, 70, 40);
+            pushDoorToDoorPositions(state, doorX, doorY, 70, 40, direction);
             break;
         case "east":
-            x = squareSize + borderWidth / 2;
-            y = squareSize / 2 + 20;
+            doorX = x + squareSize - 40 / 2;
+            doorY = centerY - 70 / 2;
+            ctx.fillRect(doorX, doorY, 40, 70);
+            pushDoorToDoorPositions(state, doorX, doorY, 40, 70, direction);
             break;
         case "west":
-            x = 20;
-            y = squareSize / 2 + 20;
+            doorX = x - 40 / 2;
+            doorY = centerY - 70 / 2;
+            ctx.fillRect(doorX, doorY, 40, 70);
+            pushDoorToDoorPositions(state, doorX, doorY, 40, 70, direction);
             break;
     }
-    ctx.fillRect(x, y, doorWidth, doorHeight);
-    pushDoorToDoorPositions(state,x,y,doorWidth, doorHeight, direction)
-
 }
 function searchDoors(room) {
     let doors = room.doors;
@@ -102,12 +181,10 @@ function searchDoors(room) {
 function drawAllCoins(coinImage, roomInfo, coinsPerRow, coinSize, padding, wallPadding) {
     coinPositions.length = 0;
     for (let i = 0; i < roomInfo.coins; i++) {
-        // Cálculo de la posición de cada moneda
-        const row = Math.floor(i / coinsPerRow); // Índice de fila
-        const col = i % coinsPerRow; // Índice de columna
+        const row = Math.floor(i / coinsPerRow);
+        const col = i % coinsPerRow;
         const xPos = x + wallPadding + col * (coinSize + padding);
         const yPos = y + wallPadding + row * (coinSize + padding);
-        // Verifica que las monedas no se salgan del área dibujable
         if (yPos + coinSize <= squareSize + borderWidth) {
             ctx.drawImage(coinImage, xPos, yPos, coinSize, coinSize);
             coinPositions.push({ x: xPos, y: yPos, size: coinSize });
@@ -119,7 +196,7 @@ function drawCoins(roomInfo) {
     const coinImagePath = "./img/coin.png";
     const coinImage = new Image();
     coinImage.src = coinImagePath;
-    const coinSize = 60;
+    const coinSize = 50;
     const padding = 10; // Espacio entre monedas
     const wallPadding = 20; // Espacio entre las monedas y las paredes del cuadro
     const coinsPerRow = Math.floor((squareSize - 2 * wallPadding) / (coinSize + padding));
@@ -157,7 +234,24 @@ function drawFinal() {
     };
 
 }
-function drawRoom(roomInfo) {
+function drawCharacter() {
+    const frontImagePath = "./img/front.png"; // Ruta de la imagen
+    const frontImage = new Image();
+    frontImage.src = frontImagePath;
+
+    frontImage.onload = function () {
+        // Ajustar el tamaño de la imagen (por ejemplo, reducir al 30% de su tamaño original)
+        const scaleFactor = 0.35; // Reducción al 30% de su tamaño original
+        const newWidth = frontImage.width * scaleFactor;
+        const newHeight = frontImage.height * scaleFactor;
+
+        const centerX = x + squareSize / 2 - newWidth / 2;
+        const centerY = y + squareSize / 2 - newHeight / 2;
+        ctx.drawImage(frontImage, centerX, centerY, newWidth, newHeight);
+    };
+}
+function drawRoom(roomInfo, animating) {
+    console.log(animating)
     drawWall()
     drawUserInfo(roomInfo)
     searchDoors(roomInfo)
@@ -166,7 +260,11 @@ function drawRoom(roomInfo) {
     }
     if (roomInfo.coins > 0){drawCoins(roomInfo)}
     if (roomInfo.keys > 0){drawKey(roomInfo)}
-    if (roomInfo.finalRoom > 0){drawFinal()}
+    if (roomInfo.finalRoom > 0){drawFinal()
+    }else if(!animating) {
+        console.log("dentro de dibujar caracter")
+        drawCharacter();
+    }
 }
 
 function getMousePosition(event, canvas) {
@@ -194,7 +292,9 @@ document.getElementById('flechasImg').addEventListener('click', function(event) 
         direction = "west";
     }
     if (direction) {
-        window.location.href = `/nav?dir=${direction}`;
+        animateMovement(direction, () => {
+            window.location.href = `/nav?dir=${direction}`;
+        });
     } else {
         console.log("Clic fuera de las flechas");
     }
