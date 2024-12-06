@@ -30,16 +30,25 @@ public class StartService {
 
     public String getFirstJson(String mapId, String username) {
         Map map = mapDAO.getMapById(Integer.parseInt(mapId));
+        List<Room> mapRooms = roomDAO.getAllRoomsByMapId(map.getId());
         User user = userDAO.getUserByUsername(username);
         updateGameTime(user);
         updateMapNameInUser(user, map);
-        List<Room> mapRooms = roomDAO.getAllRoomsByMapId(map.getId());
+        UserRooms actualRoom;
+        if (user.getRoomId() == null) {
+            updateUserRoomsWithRoomMaps(mapRooms, user);
+            actualRoom = userRoomsDAO.getUserRoomByRoomIdAndUserId(user.getId(), map.getStartRoomId());
+        }else {
+            actualRoom = userRoomsDAO.getUserRoomByRoomIdAndUserId(user.getId(),user.getRoomId());
+        }
+        return createJson(username, actualRoom, "");
+    }
+
+    private void updateUserRoomsWithRoomMaps(List<Room> mapRooms, User user) {
         for (Room room : mapRooms) {
             userRoomsDAO.insertUserRoom(user.getId(), room.getId(), room.getMapId(),
                     room.getNorth(), room.getSouth(), room.getEast(), room.getWest(), room.getCoins(), room.getDoorKeyId());
         }
-        UserRooms initialRoom = userRoomsDAO.getUserRoomByRoomIdAndUserId(user.getId(), map.getStartRoomId());
-        return createJson(username, initialRoom, "");
     }
 
     private void updateMapNameInUser(User user, Map map) {

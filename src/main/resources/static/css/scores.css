@@ -1,0 +1,53 @@
+body {
+    background: linear-gradient(135deg, #1a2a6c, #b21f1f);
+    min-height: 100vh;
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+}
+
+.score-table {
+    width: 95%;
+    margin-top: 20px;
+    border-radius: 10px;
+    background-color: rgba(0, 0, 0, 0.75); /* Fondo oscuro para la tabla */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4); /* Sombra suave alrededor de la tabla */
+}
+
+.table-dark {
+    background-color: #333; /* Fondo oscuro para los encabezados */
+    color: #fff;
+}
+
+.table th, .table td {
+    padding: 15px;
+    text-align: center;
+}
+
+.table-bordered th, .table-bordered td {
+    border: 1px solid #555; /* Bordes sutiles en las celdas */
+}
+
+.table tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.1); /* Resaltado suave al pasar el ratón */
+}
+
+.table td, .table th {
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.btn-warning {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: black;
+    text-shadow: 1px 1px 5px rgba(255, 255, 255, 0.8);
+    margin-top: 20px;
+    background-color: #ffc107;
+    border: none;
+}
+
+.btn-warning:hover {
+    background-color: #e0a800;
+    color: black;
+    text-shadow: none;
+}

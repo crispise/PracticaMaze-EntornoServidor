@@ -20,7 +20,7 @@ function obteinInfo() {
     }}
 function drawWall() {
     ctx.lineWidth = borderWidth;
-    ctx.strokeStyle = 'black';
+    ctx.strokeStyle = '#858483';
     ctx.strokeRect(x, y, squareSize, squareSize);
 }
 function drawUserInfo(roomInfo) {
@@ -43,7 +43,7 @@ function pushDoorToDoorPositions(state, x,y,doorWidth, doorHeight, direction){
 }
 
 function drawDoor(state, direction) {
-    const doorColor = state === 0 ? "red" : "white"; // 0: cerrado, 1: abierto
+    const doorColor = state === 0 ? "red" : "balck"; // 0: cerrado, 1: abierto
     ctx.fillStyle = doorColor;
     ctx.lineWidth = borderWidth;
     const doorWidth = 40;
@@ -248,6 +248,7 @@ function detectWinClick(event) {
     mouseY <= winImagePosition.y + winImagePosition.height
     ) {
         windowFormScore.style.display = "block";
+        overlay.style.display = 'block';
     }
 }
 obteinInfo()
