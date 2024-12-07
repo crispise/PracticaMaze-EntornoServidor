@@ -40,4 +40,9 @@ public class UserRoomsDAOImplem implements UserRoomsDAO {
     public void deleteUserRoomsByUserIdAndMapId(int userId, int mapId) {
         jdbcTemplate.update("DELETE FROM userRooms WHERE userId = ? AND mapId = ?", userId, mapId);
     }
+
+    @Override
+    public void deleteUserRoomsByUserIdExcludingMapID(int userId, int mapId) {
+        jdbcTemplate.update("DELETE FROM userRooms WHERE userId = ? AND mapId != ?", userId, mapId);
+    }
 }

@@ -20,7 +20,6 @@ public class ScoresContoller {
 
     @GetMapping("/scores")
     public String getScores(Model m, HttpSession session) {
-        System.out.println("entra en el get de scores");
         String username = (String) session.getAttribute("user");
         List<Score> usersScores = scoresService.obtainScores(username);
         m.addAttribute("usersScore", usersScores);
@@ -29,7 +28,6 @@ public class ScoresContoller {
 
     @PostMapping("/scores")
     public String getFormScores(Model m, HttpSession session, @RequestParam String gameComent) {
-        System.out.println("entra en el postde scores");
         String username = (String) session.getAttribute("user");
         scoresService.updateScores(username, gameComent);
         List<Score> usersScores = scoresService.obtainScores(username);

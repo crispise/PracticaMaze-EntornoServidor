@@ -25,6 +25,7 @@ public class OpenService {
 
     public String tryOpenDoor(String direction, String username) {
         User user = userDAO.getUserByUsername(username);
+        if (user.getRoomId() == null) return "goToStart";
         UserRooms actualUserRoom = userRoomsDAO.getUserRoomByRoomIdAndUserId(user.getId(), user.getRoomId());
         Door door = null;
         if (actualUserRoom != null) {

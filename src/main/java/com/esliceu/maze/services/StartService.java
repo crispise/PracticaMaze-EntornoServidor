@@ -38,7 +38,14 @@ public class StartService {
             updateUserRoomsWithRoomMaps(mapRooms, user);
             actualRoom = userRoomsDAO.getUserRoomByRoomIdAndUserId(user.getId(), map.getStartRoomId());
         } else {
-            actualRoom = userRoomsDAO.getUserRoomByRoomIdAndUserId(user.getId(), user.getRoomId());
+            Room room = roomDAO.getRoomById(user.getRoomId());
+            if (room.getMapId() == map.getId()){
+                actualRoom = userRoomsDAO.getUserRoomByRoomIdAndUserId(user.getId(), user.getRoomId());
+            }else {//////casos en los que al cerrar sesion y volver a jugar en diferentes navegadores escojas otro mapa
+                userRoomsDAO.deleteUserRoomsByUserIdExcludingMapID(user.getId(), map.getId());
+                updateUserRoomsWithRoomMaps(mapRooms, user);
+                actualRoom = userRoomsDAO.getUserRoomByRoomIdAndUserId(user.getId(), map.getStartRoomId());
+            }
         }
         return createJson(username, actualRoom, "");
     }
@@ -73,6 +80,8 @@ public class StartService {
         if (checkIfUserHasKey(user, userRooms)) mapa.put("keys", userRooms.getDoorKeyId());
         if (user.getOpenDoors() != null) updateDoorState(user, doors);
         if (checkFinalRoom(user)) mapa.put("finalRoom", user.getRoomId());
+        System.out.println(user.getMapName());
+        mapa.put("mapName", user.getMapName());
         mapa.put("north", userRooms.getNorth());
         mapa.put("south", userRooms.getSouth());
         mapa.put("east", userRooms.getEast());

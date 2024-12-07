@@ -16,7 +16,11 @@ public class GetKeyController {
     public String getKey(Model m, HttpSession session) {
         String username = (String) session.getAttribute("user");
         String jsonToSend = getKeyService.ckeckClickInKey(username);
-        m.addAttribute("jsonInfo", jsonToSend);
-        return "game";
+        if (jsonToSend.equals("goToStart")){
+            return "redirect:/start";
+        }else {
+            m.addAttribute("jsonInfo", jsonToSend);
+            return "game";
+        }
     }
 }

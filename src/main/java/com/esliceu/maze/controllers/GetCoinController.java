@@ -17,7 +17,11 @@ public class GetCoinController {
     public String getCoin(Model m, HttpSession session) {
         String username = (String) session.getAttribute("user");
         String jsonToSend = getCoinService.addCoinToUser(username);
+        if (jsonToSend.equals("goToStart")){
+            return "redirect:/start";
+        }else {
         m.addAttribute("jsonInfo", jsonToSend);
         return "game";
+        }
     }
 }

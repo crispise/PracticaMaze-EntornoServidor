@@ -26,6 +26,7 @@ public class NavService {
 
     public String trySelectedDirection(String direction, String username) {
         User user = userDAO.getUserByUsername(username);
+        if (user.getRoomId() == null) return "goToStart";
         UserRooms actualUserRoom = userRoomsDAO.getUserRoomByRoomIdAndUserId(user.getId(), user.getRoomId());
         Map map = mapDAO.getMapById(actualUserRoom.getMapId());
         if (user.getRoomId() == map.getFinishRoomId()) {

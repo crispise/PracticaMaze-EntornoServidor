@@ -15,7 +15,11 @@ public class OpenController {
     public String openDoor(Model m, HttpSession session, @RequestParam("dir") String direction) {
         String username = (String) session.getAttribute("user");
         String jsonToSend = openService.tryOpenDoor(direction, username);
-        m.addAttribute("jsonInfo", jsonToSend);
-        return "game";
+        if (jsonToSend.equals("goToStart")){
+            return "redirect:/start";
+        }else {
+            m.addAttribute("jsonInfo", jsonToSend);
+            return "game";
+        }
     }
 }

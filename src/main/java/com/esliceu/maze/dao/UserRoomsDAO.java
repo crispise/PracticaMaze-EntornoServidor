@@ -13,4 +13,5 @@ public interface UserRoomsDAO {
 
     void deleteUserRoomsByUserIdAndMapId(int userId, int mapId);
 
+    void deleteUserRoomsByUserIdExcludingMapID(int userId, int mapId);
 }

@@ -18,6 +18,7 @@ public class GetCoinService {
 
     public String addCoinToUser(String username) {
         User user = userDAO.getUserByUsername(username);
+        if (user.getRoomId() == null) return "goToStart";
         UserRooms actualUserRoom = userRoomsDAO.getUserRoomByRoomIdAndUserId(user.getId(), user.getRoomId());
         if (actualUserRoom.getCoins() == null || actualUserRoom.getCoins() == 0) {
             return startService.createJson(username, actualUserRoom, "No hay monedas en esta habitación");

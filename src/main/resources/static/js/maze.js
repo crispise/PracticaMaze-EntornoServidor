@@ -57,7 +57,9 @@ function drawWall() {
 }
 
 function drawUserInfo(roomInfo) {
+    console.log(roomInfo.mapName)
     infoUserGame.innerHTML = `
+    <div>Mapa: ${roomInfo.mapName}</div>
     <div>Habitación: ${roomInfo.userRoom}</div>
     <div>Llaves: ${roomInfo.userKeys}</div>
     <div>Monedas: ${roomInfo.userCoins}</div>`
@@ -259,6 +261,31 @@ document.getElementById('flechasImg').addEventListener('click', function(event) 
     }
 });
 
+document.addEventListener('keydown', function(event) {
+    let direction = "";
+    switch(event.code) {
+        case "ArrowUp":
+            direction = "north";
+            break;
+        case "ArrowDown":
+            direction = "south";
+            break;
+        case "ArrowRight":
+            direction = "east";
+            break;
+        case "ArrowLeft":
+            direction = "west";
+            break;
+    }
+
+    if (direction) {
+        animateMovement(direction, () => {
+            window.location.href = `/nav?dir=${direction}`;
+        });
+    }
+});
+
+
 function detectCoinClick(event) {
     const { x: mouseX, y: mouseY } = getMousePosition(event, canvas);
     for (let i = 0; i < coinPositions.length; i++) {
@@ -417,6 +444,6 @@ function animateMovement(direction, callback) {
         animationRequest = requestAnimationFrame(animate);
     }
 
-    animate(); // Comienza la animación
+    animate();
 }
 

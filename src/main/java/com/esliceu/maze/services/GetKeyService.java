@@ -24,6 +24,7 @@ public class GetKeyService {
 
     public String ckeckClickInKey(String username) {
         User user = userDAO.getUserByUsername(username);
+        if (user.getRoomId() == null) return "goToStart";
         UserRooms actualUserRoom = userRoomsDAO.getUserRoomByRoomIdAndUserId(user.getId(), user.getRoomId());
         if (actualUserRoom.getDoorKeyId() == null) {
             return startService.createJson(username, actualUserRoom, "En esta habitación no hay llaves.");
