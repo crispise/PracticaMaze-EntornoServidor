@@ -33,7 +33,7 @@ public class GetKeyService {
             return startService.createJson(username, actualUserRoom, "No tienes monedas");
         }
         if (user.getCoins() >= doorKey.getNeededCoins()) {
-            userRoomsDAO.updateTotalKeys(user.getId(),actualUserRoom.getRoomId(),null);
+            userRoomsDAO.updateTotalKeys(user.getId(), actualUserRoom.getRoomId(), null);
             return addKeyToUser(doorKey, user, actualUserRoom);
         } else {
             int coins = doorKey.getNeededCoins() - user.getCoins();

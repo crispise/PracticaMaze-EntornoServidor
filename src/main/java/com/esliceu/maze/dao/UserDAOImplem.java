@@ -51,10 +51,10 @@ public class UserDAOImplem implements UserDAO {
     }
 
     @Override
-    public void resetUser(Object roomId, int initialCoins, Object gameTime, Object idKeys, Object openDoors, String username, String mapName) {
+    public void resetUser(Object roomId, int initialCoins, Object gameTime, Object idKeys, Object openDoors, String username, String mapName, String state) {
         jdbcTemplate.update(
-                "UPDATE users SET roomId = ?, coins = ?, gameTime = ?, idKeys = ?, openDoors = ?, mapName = ? WHERE username = ?",
-                roomId, initialCoins, gameTime, idKeys, openDoors, mapName, username
+                "UPDATE users SET roomId = ?, coins = ?, gameTime = ?, idKeys = ?, openDoors = ?, mapName = ?, state = ? WHERE username = ?",
+                roomId, initialCoins, gameTime, idKeys, openDoors, mapName, state, username
         );
     }
 
@@ -67,4 +67,10 @@ public class UserDAOImplem implements UserDAO {
     public void updateMapName(String username, String mapName) {
         jdbcTemplate.update("update users set mapName = ? where username = ?", mapName, username);
     }
+
+    @Override
+    public void updateState(int id, String state) {
+        jdbcTemplate.update("update users set state = ? where id = ?", state, id);
+    }
+
 }

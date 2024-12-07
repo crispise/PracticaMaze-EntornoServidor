@@ -30,29 +30,34 @@ public class OpenService {
         if (actualUserRoom != null) {
             door = navService.findDoor(direction, actualUserRoom);
         }
-        if (door != null) {
+        if (door == null) return startService.createJson(username, actualUserRoom, "No hay puerta");
 
-            if (door.getState() == 0) {
-
-                if (user.getIdKeys() == null || user.getIdKeys().isEmpty()){
-                return startService.createJson(username, actualUserRoom, "No tienes ninguna llave");
-                }
-                String doorKeyId = String.valueOf(door.getDoorKeyId());
-                List<String> userIdKeys = Arrays.asList(user.getIdKeys().split(","));
-                boolean hasKey = false;
-                for (String idKey : userIdKeys){
-                    if (idKey.equals(doorKeyId)) hasKey = true;
-                }
-                if (hasKey){
-                    userDAO.updateOpenDoors(username, String.valueOf(door.getId()));
-                    return startService.createJson(username, actualUserRoom, "");
-                }else {
-                    return startService.createJson(username, actualUserRoom, "La llave correcta es la LLave " + doorKeyId);
-                }
-            }
+        if (door.getState() == 0) {
+            return treatCloseDoor(username, user, actualUserRoom, door);
         }
-        return startService.createJson(username, actualUserRoom, "No hay puerta");
+        return "error";
     }
 
+    private String treatCloseDoor(String username, User user, UserRooms actualUserRoom, Door door) {
+        if (user.getIdKeys() == null || user.getIdKeys().isEmpty())
+            return startService.createJson(username, actualUserRoom, "No tienes ninguna llave");
 
+        String doorKeyId = String.valueOf(door.getDoorKeyId());
+        List<String> userIdKeys = Arrays.asList(user.getIdKeys().split(","));
+        boolean hasKey = checkUserKeys(userIdKeys, doorKeyId);
+        if (hasKey) {
+            userDAO.updateOpenDoors(username, String.valueOf(door.getId()));
+            return startService.createJson(username, actualUserRoom, "");
+        } else {
+            return startService.createJson(username, actualUserRoom, "La llave correcta es la LLave " + doorKeyId);
+        }
+    }
+
+    private static boolean checkUserKeys(List<String> userIdKeys, String doorKeyId) {
+        boolean hasKey = false;
+        for (String idKey : userIdKeys) {
+            if (idKey.equals(doorKeyId)) hasKey = true;
+        }
+        return hasKey;
+    }
 }

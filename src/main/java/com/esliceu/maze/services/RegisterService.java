@@ -17,7 +17,6 @@ public class RegisterService {
     Encryptor encryptor;
 
     public void registerUser(String name, String username, String password) throws Exception {
-        System.out.println("entra en el registerUser");
         boolean correctUsername = checkIfUsernameExists(username);
         boolean correctPassword = checkPasswordLength(password);
         boolean correctName = checkNameLength(name);
@@ -54,7 +53,6 @@ public class RegisterService {
     private boolean checkIfUsernameExists(String username) {
         User user = userDAO.getUserByUsername(username);
         if (user != null) {
-            System.out.println("el usuario es nulo");
             return false;
         }
         return true;

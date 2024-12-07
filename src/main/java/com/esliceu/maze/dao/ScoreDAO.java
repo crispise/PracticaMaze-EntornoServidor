@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface ScoreDAO {
     void insertScore(User user, long gameTime, String comentary);
+
     List<Score> getAllScores();
 }

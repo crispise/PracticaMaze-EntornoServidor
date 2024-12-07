@@ -10,13 +10,14 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public class ScoreDAOImplem implements ScoreDAO{
+public class ScoreDAOImplem implements ScoreDAO {
     @Autowired
     JdbcTemplate jdbcTemplate;
+
     @Override
     public void insertScore(User user, long gameTime, String comentary) {
         jdbcTemplate.update("insert into scores (userName, mapName, gameTime, comentary) values (?,?,?,?)"
-                ,user.getName(),user.getMapName(), gameTime, comentary);
+                , user.getName(), user.getMapName(), gameTime, comentary);
     }
 
     @Override

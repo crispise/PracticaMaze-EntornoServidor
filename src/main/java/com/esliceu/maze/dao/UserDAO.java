@@ -18,9 +18,12 @@ public interface UserDAO {
 
     void updateOpenDoors(String username, String doorKeyId);
 
-    void resetUser(Object roomId, int initialCoins, Object gameTime, Object idKeys, Object openDoors, String username, String mapName);
+    void resetUser(Object roomId, int initialCoins, Object gameTime, Object idKeys, Object openDoors, String username, String mapName, String state);
 
     void updateGameTime(String username, long currentTime);
 
     void updateMapName(String username, String mapName);
+
+
+    void updateState(int id, String state);
 }

@@ -27,68 +27,51 @@ public class NavService {
     public String trySelectedDirection(String direction, String username) {
         User user = userDAO.getUserByUsername(username);
         UserRooms actualUserRoom = userRoomsDAO.getUserRoomByRoomIdAndUserId(user.getId(), user.getRoomId());
-        System.out.println("la direccion");
-        System.out.println(direction);
-        System.out.println("la habitacion actual");
-        System.out.println(actualUserRoom);
         Map map = mapDAO.getMapById(actualUserRoom.getMapId());
-        if (user.getRoomId() == map.getFinishRoomId()){
+        if (user.getRoomId() == map.getFinishRoomId()) {
             return startService.createJson(username, actualUserRoom, "El juego ha acabado");
         }
 
         Door door = findDoor(direction, actualUserRoom);
-        System.out.println("la puerta que encuentra");
-        System.out.println(door);
-        if (door != null) {
-            if (user.getOpenDoors() != null){
-                Set<String> openDoorIds = new HashSet<>(Arrays.asList(user.getOpenDoors().split(",")));
-                if (openDoorIds.contains(String.valueOf(door.getId()))) {
-                     door.setState(1);
-                }
+        if (door == null) return startService.createJson(username, actualUserRoom, "No hay puertas en esa dirección");
+
+        return treatDoors(username, user, door, actualUserRoom);
+    }
+
+    private String treatDoors(String username, User user, Door door, UserRooms actualUserRoom) {
+        if (user.getOpenDoors() != null) {
+            Set<String> openDoorIds = new HashSet<>(Arrays.asList(user.getOpenDoors().split(",")));
+            if (openDoorIds.contains(String.valueOf(door.getId()))) {
+                door.setState(1);
             }
-            if (door.getState() == 1) {
-                UserRooms newUserRooms = null;
-                if (door.getRoom1Id() == actualUserRoom.getRoomId()) {
-                    newUserRooms = userRoomsDAO.getUserRoomByRoomIdAndUserId(user.getId(), door.getRoom2Id());
-                } else if (door.getRoom2Id() == actualUserRoom.getRoomId()) {
-                    newUserRooms = userRoomsDAO.getUserRoomByRoomIdAndUserId(user.getId(), door.getRoom1Id());
-                }
-                return startService.createJson(username, newUserRooms, "");
-            }
-            return startService.createJson(username, actualUserRoom, "La puerta esta cerrada");
         }
-        return startService.createJson(username, actualUserRoom, "No hay puertas en esa dirección");
+        if (door.getState() == 1) {
+            UserRooms newUserRooms = null;
+            if (door.getRoom1Id() == actualUserRoom.getRoomId()) {
+                newUserRooms = userRoomsDAO.getUserRoomByRoomIdAndUserId(user.getId(), door.getRoom2Id());
+            } else if (door.getRoom2Id() == actualUserRoom.getRoomId()) {
+                newUserRooms = userRoomsDAO.getUserRoomByRoomIdAndUserId(user.getId(), door.getRoom1Id());
+            }
+            return startService.createJson(username, newUserRooms, "");
+        }
+        return startService.createJson(username, actualUserRoom, "La puerta esta cerrada");
     }
 
     public Door findDoor(String direction, UserRooms actualUserRoom) {
-        System.out.println("dirección dentro de findDoor");
-        System.out.println(direction);
         switch (direction) {
             case "north":
-                if (actualUserRoom.getNorth() != null) {
-                    System.out.println("el norte no es nulo");
-                    return doorDAO.getDoorById(actualUserRoom.getNorth());
-                }
-                break;  // Añadido break para evitar el "fall-through"
+                if (actualUserRoom.getNorth() != null) return doorDAO.getDoorById(actualUserRoom.getNorth());
+                break;
             case "south":
-                if (actualUserRoom.getSouth() != null) {
-                    System.out.println("el sur no es nulo");
-                    return doorDAO.getDoorById(actualUserRoom.getSouth());
-                }
-                break;  // Añadido break
+                if (actualUserRoom.getSouth() != null) return doorDAO.getDoorById(actualUserRoom.getSouth());
+                break;
             case "east":
-                if (actualUserRoom.getEast() != null) {
-                    System.out.println("el este no es nulo");
-                    return doorDAO.getDoorById(actualUserRoom.getEast());
-                }
-                break;  // Añadido break
+                if (actualUserRoom.getEast() != null) return doorDAO.getDoorById(actualUserRoom.getEast());
+                break;
             case "west":
-                if (actualUserRoom.getWest() != null) {
-                    System.out.println("el oeste no es nulo");
-                    return doorDAO.getDoorById(actualUserRoom.getWest());
-                }
-                break;  // Añadido break
+                if (actualUserRoom.getWest() != null) return doorDAO.getDoorById(actualUserRoom.getWest());
+                break;
         }
-        return null;  // Si no es ninguna de las direcciones, devolvemos null
+        return null;
     }
 }

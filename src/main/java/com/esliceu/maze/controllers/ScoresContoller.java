@@ -17,22 +17,22 @@ import java.util.List;
 public class ScoresContoller {
     @Autowired
     ScoresService scoresService;
+
     @GetMapping("/scores")
     public String getScores(Model m, HttpSession session) {
+        System.out.println("entra en el get de scores");
         String username = (String) session.getAttribute("user");
-        List <Score> usersScores  = scoresService.obtainScores(username);
-        System.out.println("si que entra en el get");
-        System.out.println(usersScores);
+        List<Score> usersScores = scoresService.obtainScores(username);
         m.addAttribute("usersScore", usersScores);
         return "scores";
     }
 
     @PostMapping("/scores")
     public String getFormScores(Model m, HttpSession session, @RequestParam String gameComent) {
-        System.out.println("entra en el post");
+        System.out.println("entra en el postde scores");
         String username = (String) session.getAttribute("user");
         scoresService.updateScores(username, gameComent);
-        List <Score> usersScores  = scoresService.obtainScores(username);
+        List<Score> usersScores = scoresService.obtainScores(username);
         m.addAttribute("usersScore", usersScores);
         return "scores";
     }

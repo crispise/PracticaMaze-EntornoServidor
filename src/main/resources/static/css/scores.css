@@ -9,12 +9,12 @@ body {
     width: 95%;
     margin-top: 20px;
     border-radius: 10px;
-    background-color: rgba(0, 0, 0, 0.75); /* Fondo oscuro para la tabla */
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4); /* Sombra suave alrededor de la tabla */
+    background-color: rgba(0, 0, 0, 0.75);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
 }
 
 .table-dark {
-    background-color: #333; /* Fondo oscuro para los encabezados */
+    background-color: #333;
     color: #fff;
 }
 
@@ -24,11 +24,11 @@ body {
 }
 
 .table-bordered th, .table-bordered td {
-    border: 1px solid #555; /* Bordes sutiles en las celdas */
+    border: 1px solid #555;
 }
 
 .table tbody tr:hover {
-    background-color: rgba(255, 255, 255, 0.1); /* Resaltado suave al pasar el ratón */
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
 .table td, .table th {

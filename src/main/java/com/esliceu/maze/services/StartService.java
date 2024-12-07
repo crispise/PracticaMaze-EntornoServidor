@@ -7,7 +7,6 @@ import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
 import java.util.*;
 
 
@@ -29,28 +28,28 @@ public class StartService {
     }
 
     public String getFirstJson(String mapId, String username) {
-        System.out.println("entra en el service");
         Map map = mapDAO.getMapById(Integer.parseInt(mapId));
-        System.out.println(map);
         List<Room> mapRooms = roomDAO.getAllRoomsByMapId(map.getId());
-        System.out.println(mapRooms);
         User user = userDAO.getUserByUsername(username);
-        System.out.println("el usuario es");
-        System.out.println(user);
         updateGameTime(user);
         updateMapNameInUser(user, map);
         UserRooms actualRoom;
         if (user.getRoomId() == null) {
-            System.out.println("usuario sin habitaciones");
             updateUserRoomsWithRoomMaps(mapRooms, user);
             actualRoom = userRoomsDAO.getUserRoomByRoomIdAndUserId(user.getId(), map.getStartRoomId());
-
-        }else {
-            actualRoom = userRoomsDAO.getUserRoomByRoomIdAndUserId(user.getId(),user.getRoomId());
+        } else {
+            actualRoom = userRoomsDAO.getUserRoomByRoomIdAndUserId(user.getId(), user.getRoomId());
         }
-        System.out.println("habitacion actual");
-        System.out.println(actualRoom);
         return createJson(username, actualRoom, "");
+    }
+
+    private void updateGameTime(User user) {
+        long currentTime = System.currentTimeMillis(); // Tiempo actual en milisegundos
+        userDAO.updateGameTime(user.getUsername(), currentTime);
+    }
+
+    private void updateMapNameInUser(User user, Map map) {
+        userDAO.updateMapName(user.getUsername(), map.getMapName());
     }
 
     private void updateUserRoomsWithRoomMaps(List<Room> mapRooms, User user) {
@@ -60,22 +59,17 @@ public class StartService {
         }
     }
 
-    private void updateMapNameInUser(User user, Map map) {
-        userDAO.updateMapName(user.getUsername(),map.getMapName());
-    }
-
-    private void updateGameTime(User user) {
-        long currentTime = System.currentTimeMillis(); // Tiempo actual en milisegundos
-        userDAO.updateGameTime(user.getUsername(), currentTime);
-    }
-
-
     public String createJson(String username, UserRooms userRooms, String errorMessage) {
-        System.out.println("entra en crear json");
         userDAO.updateUserRoomStatus(username, userRooms.getRoomId());
         User user = userDAO.getUserByUsername(username);
         List<Door> doors = doorDAO.findAllDoorsByRoomId(userRooms.getRoomId());
         HashMap<String, Object> mapa = new HashMap<>();
+        updateHashmap(userRooms, errorMessage, user, mapa, doors);
+        Gson gson = new Gson();
+        return gson.toJson(mapa);
+    }
+
+    private void updateHashmap(UserRooms userRooms, String errorMessage, User user, HashMap<String, Object> mapa, List<Door> doors) {
         if (checkIfUserHasKey(user, userRooms)) mapa.put("keys", userRooms.getDoorKeyId());
         if (user.getOpenDoors() != null) updateDoorState(user, doors);
         if (checkFinalRoom(user)) mapa.put("finalRoom", user.getRoomId());
@@ -89,17 +83,18 @@ public class StartService {
         mapa.put("userKeys", getKeysInfo(user));
         mapa.put("doors", getDoorsInfo(doors));
         mapa.put("errorMessage", errorMessage);
-        Gson gson = new Gson();
-        return gson.toJson(mapa);
     }
 
-    private boolean checkFinalRoom(User user) {
-        UserRooms userRooms = userRoomsDAO.getUserRoomByRoomIdAndUserId(user.getId(), user.getRoomId());
-        Map map = mapDAO.getMapById(userRooms.getMapId());
-        if (user.getRoomId() == map.getFinishRoomId()) {
-            System.out.println("si esta en la final");
+    private boolean checkIfUserHasKey(User user, UserRooms userRooms) {
+        if (user.getIdKeys() == null || user.getIdKeys().isEmpty()) {
             return true;
-        }return false;
+        }
+        if (userRooms.getDoorKeyId() != null) {
+            List<String> userKeys = Arrays.asList(user.getIdKeys().split(","));
+            String roomKey = String.valueOf(userRooms.getDoorKeyId());
+            if (!userKeys.contains(roomKey)) return true;
+        }
+        return false;
     }
 
     private static void updateDoorState(User user, List<Door> doors) {
@@ -111,14 +106,11 @@ public class StartService {
         }
     }
 
-    private boolean checkIfUserHasKey(User user, UserRooms userRooms) {
-        if (user.getIdKeys() == null || user.getIdKeys().isEmpty()) {
+    private boolean checkFinalRoom(User user) {
+        UserRooms userRooms = userRoomsDAO.getUserRoomByRoomIdAndUserId(user.getId(), user.getRoomId());
+        Map map = mapDAO.getMapById(userRooms.getMapId());
+        if (user.getRoomId() == map.getFinishRoomId()) {
             return true;
-        }
-        if (userRooms.getDoorKeyId() != null) {
-            List<String> userKeys = Arrays.asList(user.getIdKeys().split(","));
-            String roomKey = String.valueOf(userRooms.getDoorKeyId());
-            if (!userKeys.contains(roomKey)) return true;
         }
         return false;
     }
@@ -138,10 +130,8 @@ public class StartService {
         return "";
     }
 
-
     private static List<HashMap<String, Object>> getDoorsInfo(List<Door> doors) {
         List<HashMap<String, Object>> doorsInfo = new ArrayList<>();
-
         if (doors != null && !doors.isEmpty()) {
             for (Door door : doors) {
                 HashMap<String, Object> doorInfo = new HashMap<>();

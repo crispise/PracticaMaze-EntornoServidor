@@ -11,7 +11,7 @@
 <form method="post" action="/start" class="border rounded p-4 shadow">
     <h1>Bienvenido</h1>
     <div class="form-group">
-        <label for="mapOption">Selecciona el mapa</label>
+        <label for="mapOption">Selecciona el nivel</label>
         <select id="mapOption" name="mapId" class="form-select my-1 text-center">
             <option th:each="map : ${maps}" th:value="${map.id}" th:text="${map.mapName}"></option>
         </select>

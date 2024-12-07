@@ -27,7 +27,7 @@ public class ResetService {
         User user = userDAO.getUserByUsername(username);
         Room actualRoom = roomDAO.getRoomById(user.getRoomId());
         Map map = mapDAO.getMapById(actualRoom.getMapId());
-        userDAO.resetUser(null, 0, null, null, null, username, null);
+        userDAO.resetUser(null, 0, null, null, null, username, null, "disconect");
         userRoomsDAO.deleteUserRoomsByUserIdAndMapId(user.getId(), map.getId());
     }
 }

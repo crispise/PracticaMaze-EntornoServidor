@@ -14,6 +14,15 @@ public class User {
     private Long gameTime;
     private String idKeys;
     private String openDoors;
+    private String state;
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
 
     public String getMapName() {
         return mapName;
@@ -108,6 +117,7 @@ public class User {
                 ", gameTime=" + gameTime +
                 ", idKeys='" + idKeys + '\'' +
                 ", openDoors='" + openDoors + '\'' +
+                ", state='" + state + '\'' +
                 '}';
     }
 }

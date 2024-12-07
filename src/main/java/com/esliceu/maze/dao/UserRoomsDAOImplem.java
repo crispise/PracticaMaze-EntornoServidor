@@ -8,9 +8,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class UserRoomsDAOImplem implements UserRoomsDAO{
+public class UserRoomsDAOImplem implements UserRoomsDAO {
     @Autowired
     JdbcTemplate jdbcTemplate;
+
     public void insertUserRoom(int userId, int roomId, int mapId, Integer north, Integer south, Integer east, Integer west, Integer coins, Integer doorKeyId) {
         jdbcTemplate.update("insert into userRooms (userId, roomId, mapId, north, south," +
                         " east, west, coins, doorkeyId) values (?, ?, ?, ?, ?, ?, ?, ?, ?)",
@@ -37,6 +38,6 @@ public class UserRoomsDAOImplem implements UserRoomsDAO{
 
     @Override
     public void deleteUserRoomsByUserIdAndMapId(int userId, int mapId) {
-        jdbcTemplate.update( "DELETE FROM userRooms WHERE userId = ? AND mapId = ?", userId, mapId);
+        jdbcTemplate.update("DELETE FROM userRooms WHERE userId = ? AND mapId = ?", userId, mapId);
     }
 }

@@ -79,7 +79,7 @@ body {
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.7);
-    z-index: 9998; /* Debe estar detrás del modal */
+    z-index: 9998;
     display: none;
 }
 .windowFinalScore {
@@ -94,7 +94,7 @@ body {
     box-shadow: 0 4px 15px rgba(63, 63, 63, 0.9);
     width: 600px;
     max-width: 90%;
-    color: white; /* Color de texto en blanco */
+    color: white;
     font-family: 'Arial', sans-serif;
     text-align: center;
 }
@@ -122,7 +122,7 @@ body {
 }
 
 .containerFormScore .btn-primary {
-    background-color: #df4922; /* Fondo verde para el botón */
+    background-color: #df4922;
     border: none;
     padding: 15px 32px;
     text-align: center;
@@ -135,5 +135,5 @@ body {
 }
 
 .containerFormScore .btn-primary:hover {
-    background-color: #c84f2f; /* Cambio de color al pasar el ratón */
+    background-color: #c84f2f;
 }

@@ -25,6 +25,7 @@ public class ScoresService {
         scoreDAO.insertScore(user, gameTime, gameComent);
         resetService.resetGame(username);
     }
+
     private long calculateFinalTime(User user) {
         long currentTime = System.currentTimeMillis(); // Tiempo actual en milisegundos
         long elapsedTime = currentTime - user.getGameTime();
@@ -35,7 +36,6 @@ public class ScoresService {
         List<Score> usersScore = scoreDAO.getAllScores();
         return usersScore;
     }
-
 
 
 }

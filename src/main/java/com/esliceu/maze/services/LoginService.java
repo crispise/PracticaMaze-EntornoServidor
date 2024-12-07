@@ -21,6 +21,7 @@ public class LoginService {
         String encryptPassw = encryptor.encryptString(password);
         if (u != null) {
             if (u.getPassword().equals(encryptPassw)) {
+                userDAO.updateState(u.getId(), "connect");
                 return u;
             }
         }

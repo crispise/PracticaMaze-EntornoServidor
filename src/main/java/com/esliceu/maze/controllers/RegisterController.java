@@ -23,7 +23,6 @@ public class RegisterController {
 
     @PostMapping("/register")
     public String register(Model model, @RequestParam String name, @RequestParam String username, @RequestParam String password) {
-        System.out.println("esta en postmapping");
         try {
             registerService.registerUser(name, username, password);
             model.addAttribute("messageType", "success");
