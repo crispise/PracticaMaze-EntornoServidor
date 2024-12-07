@@ -40,36 +40,67 @@ function loadImages() {
     }
 }
 loadImages();
-
-const centerX = canvas.width / 2;
-const centerY = canvas.height / 2;
-const steps = 80;
-
-let currentFrame = 0;
+const steps = 80; // Cantidad de pasos para completar el movimiento
+let currentFrame = 0; // Fotograma actual para la animación
 let animationRequest = null;
+
 function drawFrame(direction, currentFrame, x, y) {
     const img = loadedImages[direction][currentFrame];
     ctx.drawImage(img, x, y, 70, 70);
 }
+
 let frameTime = 0; // Tiempo acumulado desde el último cambio de fotograma
 const frameInterval = 100;
+
+// Función para obtener las coordenadas iniciales y finales según la dirección
+function getMovementCoordinates(direction) {
+    switch (direction) {
+        case "north":
+            return {
+                startX: 225.725,
+                startY: 259.725,
+                endX: 225.725,
+                endY: 20,
+            };
+        case "south":
+            return {
+                startX: 225.725,
+                startY: 259.725,
+                endX: 225.725,
+                endY: 500,
+            };
+        case "west":
+            return {
+                startX: 259.725,
+                startY: 225.725,
+                endX: 20,
+                endY: 225.725,
+            };
+        case "east":
+            return {
+                startX: 259.725,
+                startY: 225.725,
+                endX: 500,
+                endY: 225.725,
+            };
+        default:
+            throw new Error("Dirección no válida");
+    }
+}
+
+
+
 function animateMovement(direction, callback) {
     if (animationRequest) cancelAnimationFrame(animationRequest); // Detiene cualquier animación en curso
-
     const images = loadedImages[direction];
-    const doorPosition = getDoorPosition(direction); // Calcula la posición de la puerta
-    const deltaX = (doorPosition.x - centerX) / steps; // Cambio en X por paso
-    const deltaY = (doorPosition.y - centerY) / steps; // Cambio en Y por paso
-
-    let currentX = centerX;
-    let currentY = centerY;
-    let stepCount = 0;
+    const { startX, startY, endX, endY } = getMovementCoordinates(direction); // Coordenadas iniciales y finales
+    let stepCount = 0; // Contador de pasos
 
     function animate() {
         const now = performance.now(); // Tiempo actual
         const elapsed = now - frameTime; // Tiempo desde el último cambio de fotograma
 
-        if (stepCount >= steps) {
+        if (stepCount > steps) {
             if (callback) callback(); // Llama al callback cuando termine el movimiento
             return;
         }
@@ -77,19 +108,20 @@ function animateMovement(direction, callback) {
         ctx.clearRect(0, 0, canvas.width, canvas.height); // Limpiar el canvas
         drawRoom(roomInfo); // Redibujar todo el contenido (paredes, monedas, puertas, etc.)
 
-        // Cambiar de fotograma solo si ha pasado el tiempo necesario
         if (elapsed >= frameInterval) {
             currentFrame = (currentFrame + 1) % images.length;
-            frameTime = now; // Actualizar el tiempo del último cambio de fotograma
+            frameTime = now;
         }
+        const t = stepCount / steps;
+        const currentX = startX + t * (endX - startX);
+        const currentY = startY + t * (endY - startY);
 
-        currentX += deltaX; // Mover en X
-        currentY += deltaY; // Mover en Y
-        drawFrame(direction, currentFrame, currentX, currentY); // Dibujar el personaje
+        drawFrame(direction, currentFrame, currentX, currentY);
         stepCount++;
-
         animationRequest = requestAnimationFrame(animate);
     }
+
+
     animate(); // Comienza la animación
 }
 
@@ -112,7 +144,6 @@ function getDoorPosition(direction) {
 }
 //////////////////////////////////////////////////////////////////////////////////////////
 function obteinInfo() {
-
     if (jsonInfo) {
         roomInfo = JSON.parse(jsonInfo)
         console.log(roomInfo)
@@ -220,33 +251,25 @@ function drawAllCoins(coinImage, roomInfo, coinsPerRow, coinSize, padding, wallP
     }
 }
 
+const loadedCoinImage = new Image();
+loadedCoinImage.src = "./img/coin.png";
 function drawCoins(roomInfo) {
-    const coinImagePath = "./img/coin.png";
-    const coinImage = new Image();
-    coinImage.src = coinImagePath;
     const coinSize = 50;
-    const padding = 10; // Espacio entre monedas
-    const wallPadding = 20; // Espacio entre las monedas y las paredes del cuadro
+    const padding = 10;
+    const wallPadding = 20;
     const coinsPerRow = Math.floor((squareSize - 2 * wallPadding) / (coinSize + padding));
-    coinImage.onload = function () {
-        drawAllCoins(coinImage, roomInfo, coinsPerRow, coinSize, padding, wallPadding);
-    };
+    drawAllCoins(loadedCoinImage, roomInfo, coinsPerRow, coinSize, padding, wallPadding);
 }
 let keyPosition = null;
-
+const loadedKeyImage = new Image();
+loadedKeyImage.src =  "./img/key.png";
 function drawKey(roomInfo) {
-    const keyImagePath = "./img/key.png";
-    const keyImage = new Image();
-    keyImage.src = keyImagePath;
     const keySize = 70;
     const wallPadding = 50; // Espacio entre la llave y las paredes del cuadro
-
-    keyImage.onload = function () {
-        const xPos = x + 320;
-        const yPos = y + 320;
-        ctx.drawImage(keyImage, xPos, yPos, keySize, keySize);
-        keyPosition = { x: xPos, y: yPos, size: keySize };
-    };
+    const xPos = x + 320;
+    const yPos = y + 320;
+    ctx.drawImage(loadedKeyImage, xPos, yPos, keySize, keySize);
+    keyPosition = { x: xPos, y: yPos, size: keySize };
 }
 let winImagePosition = null;
 function drawFinal() {
@@ -262,21 +285,19 @@ function drawFinal() {
     };
 
 }
+
+const loadedCharacterImage = new Image();
+loadedCharacterImage.src =  "./img/front.png";
 function drawCharacter() {
-    const frontImagePath = "./img/front.png"; // Ruta de la imagen
-    const frontImage = new Image();
-    frontImage.src = frontImagePath;
+    const scaleFactor = 0.35; // Reducción al 30% de su tamaño original
+    const newWidth = loadedCharacterImage.width * scaleFactor;
+    const newHeight = loadedCharacterImage.height * scaleFactor;
 
-    frontImage.onload = function () {
-        const scaleFactor = 0.35; // Reducción al 30% de su tamaño original
-        const newWidth = frontImage.width * scaleFactor;
-        const newHeight = frontImage.height * scaleFactor;
-
-        const centerX = x + squareSize / 2 - newWidth / 2;
-        const centerY = y + squareSize / 2 - newHeight / 2;
-        ctx.drawImage(frontImage, centerX, centerY, newWidth, newHeight);
-    };
+    const centerX = x + squareSize / 2 - newWidth / 2;
+    const centerY = y + squareSize / 2 - newHeight / 2;
+    ctx.drawImage(loadedCharacterImage, centerX, centerY, newWidth, newHeight);
 }
+
 function drawRoom(roomInfo) {
     drawWall()
     drawUserInfo(roomInfo)
@@ -289,6 +310,7 @@ function drawRoom(roomInfo) {
     if (roomInfo.finalRoom > 0){drawFinal()
     }
 }
+
 function drawStaticElements(roomInfo) {
     bufferCtx.clearRect(0, 0, bufferCanvas.width, bufferCanvas.height);  // Limpiar el buffer
     drawWall();
