@@ -1,8 +1,5 @@
 package com.esliceu.maze.model;
 
-import java.sql.Time;
-import java.util.List;
-
 public class User {
     private int id;
     private String name;

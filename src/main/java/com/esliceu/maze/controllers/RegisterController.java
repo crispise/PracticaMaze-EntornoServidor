@@ -29,13 +29,13 @@ public class RegisterController {
             model.addAttribute("message", "El registro se ha realizado correctamente");
         } catch (UserExistsException userException) {
             model.addAttribute("messageType", "errorUserExists");
-            model.addAttribute("message", userException);
+            model.addAttribute("message", "El username ya existe.");
         } catch (PasswordTooShortException passwordTooShortException) {
             model.addAttribute("messageType", "errorPassword");
-            model.addAttribute("message", passwordTooShortException);
+            model.addAttribute("message", "La contraseña tiene que tener un mínimo de 5 carácteres.");
         } catch (NameTooShortException nameTooShortException) {
             model.addAttribute("messageType", "errorName");
-            model.addAttribute("message", nameTooShortException);
+            model.addAttribute("message", "El nombre es demasiado corto, tiene que tener 6 carácteres.");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

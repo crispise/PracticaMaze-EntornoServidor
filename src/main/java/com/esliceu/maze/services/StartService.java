@@ -80,7 +80,6 @@ public class StartService {
         if (checkIfUserHasKey(user, userRooms)) mapa.put("keys", userRooms.getDoorKeyId());
         if (user.getOpenDoors() != null) updateDoorState(user, doors);
         if (checkFinalRoom(user)) mapa.put("finalRoom", user.getRoomId());
-        System.out.println(user.getMapName());
         mapa.put("mapName", user.getMapName());
         mapa.put("north", userRooms.getNorth());
         mapa.put("south", userRooms.getSouth());
