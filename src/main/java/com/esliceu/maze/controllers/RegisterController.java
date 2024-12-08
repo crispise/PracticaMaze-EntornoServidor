@@ -17,7 +17,7 @@ public class RegisterController {
     RegisterService registerService;
 
     @GetMapping("/register")
-    public String getLogin() {
+    public String getRegister() {
         return "register";
     }
 
