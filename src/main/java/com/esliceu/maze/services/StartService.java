@@ -27,25 +27,29 @@ public class StartService {
         return mapDAO.getAllMaps();
     }
 
-    public String getFirstJson(String mapId, String username) {
-        Map map = mapDAO.getMapById(Integer.parseInt(mapId));
-        List<Room> mapRooms = roomDAO.getAllRoomsByMapId(map.getId());
+    public int checkIfUserHasGame(String username) {
         User user = userDAO.getUserByUsername(username);
-        updateGameTime(user);
-        updateMapNameInUser(user, map);
+        if (user.getRoomId() == null) return 0;
+        Room room = roomDAO.getRoomById(user.getRoomId());
+        Map map = mapDAO.getMapById(room.getMapId());
+        return map.getId();
+
+    }
+
+    public String getFirstJson(String mapId, String username) {
+        User user = userDAO.getUserByUsername(username);
         UserRooms actualRoom;
         if (user.getRoomId() == null) {
+            System.out.println("no hay habitacion en usuario");
+            Map map = mapDAO.getMapById(Integer.parseInt(mapId));
+            List<Room> mapRooms = roomDAO.getAllRoomsByMapId(map.getId());
+            updateGameTime(user);
+            updateMapNameInUser(user, map);
             updateUserRoomsWithRoomMaps(mapRooms, user);
             actualRoom = userRoomsDAO.getUserRoomByRoomIdAndUserId(user.getId(), map.getStartRoomId());
-        } else {
-            Room room = roomDAO.getRoomById(user.getRoomId());
-            if (room.getMapId() == map.getId()){
-                actualRoom = userRoomsDAO.getUserRoomByRoomIdAndUserId(user.getId(), user.getRoomId());
-            }else {//////casos en los que al cerrar sesion y volver a jugar en diferentes navegadores escojas otro mapa
-                userRoomsDAO.deleteUserRoomsByUserIdExcludingMapID(user.getId(), map.getId());
-                updateUserRoomsWithRoomMaps(mapRooms, user);
-                actualRoom = userRoomsDAO.getUserRoomByRoomIdAndUserId(user.getId(), map.getStartRoomId());
-            }
+        }else {
+            System.out.println("si que hay habitacion en usuario");
+            actualRoom = userRoomsDAO.getUserRoomByRoomIdAndUserId(user.getId(), user.getRoomId());
         }
         return createJson(username, actualRoom, "");
     }

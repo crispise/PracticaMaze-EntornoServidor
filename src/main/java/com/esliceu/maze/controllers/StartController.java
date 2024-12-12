@@ -18,7 +18,18 @@ public class StartController {
     StartService startService;
 
     @GetMapping("/start")
-    public String startPage(Model m) {
+    public String startPage(Model m, HttpSession session) {
+        String username = (String) session.getAttribute("user");
+        System.out.println("start controller");
+        String hasGameMapId = String.valueOf(startService.checkIfUserHasGame(username));
+        if (!hasGameMapId.equals("0")) {
+            System.out.println("estas dentro de que si hay habitacion");
+            String jsonToSend = startService.getFirstJson(hasGameMapId, username);
+            System.out.println("el string json es");
+            System.out.println(jsonToSend);
+            m.addAttribute("jsonInfo", jsonToSend);
+            return "game";
+        }
         List<Map> maps = startService.getAllMaps();
         m.addAttribute("maps", maps);
         return "start";

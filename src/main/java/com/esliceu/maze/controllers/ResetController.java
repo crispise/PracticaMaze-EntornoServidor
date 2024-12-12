@@ -21,6 +21,13 @@ public class ResetController {
         return "redirect:/login";
     }
 
+    @GetMapping("/closeSesion")
+    public String closeSesion(Model m, HttpSession session) {
+        String username = (String) session.getAttribute("user");
+        session.invalidate();
+        return "redirect:/login";
+    }
+
     @PostMapping("/resetGame")
     public String restartGame(Model m, HttpSession session) {
         return "redirect:/start";
